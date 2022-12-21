@@ -1,0 +1,16 @@
+{{- if .Values.monica.phpConfigs -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "monica.fullname" . }}-phpconfig
+  labels:
+    app.kubernetes.io/name: {{ include "monica.name" . }}
+    helm.sh/chart: {{ include "monica.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+{{- range $key, $value := .Values.monica.phpConfigs }}
+  {{ $key }}: |-
+{{ $value | indent 4 }}
+{{- end }}
+{{- end }}
