@@ -1,3 +1,36 @@
 apiVersion: v1
-entries: {}
-generated: "2022-12-21T22:49:25.821467786+01:00"
+entries:
+  monica:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-12-21T22:13:11.049170051Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.6.*
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.0.*
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.12.*
+    description: A Helm chart for Kubernetes to install Monica
+    digest: efe8371fe3c015729655bfb5b3417ab82967ce8fd7af5367c333fb40fb7ac72f
+    icon: https://www.monicahq.com/favicon.ico
+    keywords:
+    - crm
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: MonicaHQ
+      url: https://github.com/monicahq/monica
+    name: monica
+    sources:
+    - https://github.com/monicahq/monica
+    - https://hub.docker.com/_/monica
+    urls:
+    - https://github.com/monicahq/helm/releases/download/monica-1.0.1/monica-1.0.1.tgz
+    version: 1.0.1
+generated: "2022-12-21T22:13:11.049181251Z"
