@@ -1,0 +1,283 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "monica.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "monica.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: app
+    helm.sh/chart: {{ include "monica.chart" . }}
+  {{- if .Values.deploymentLabels }}
+{{ toYaml .Values.deploymentLabels | indent 4 }}
+  {{- end }}
+  {{- if .Values.deploymentAnnotations }}
+  annotations:
+{{ toYaml .Values.deploymentAnnotations | indent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+{{ toYaml .Values.monica.strategy | indent 4 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "monica.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "monica.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: app
+        {{- if .Values.redis.enabled }}
+        {{ template "monica.redis.fullname" . }}-client: "true"
+        {{- end }}        
+        {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+        {{- end }}
+      annotations:
+        php-config-hash: {{ toJson .Values.monica.phpConfigs | sha256sum }}
+        {{- if .Values.nginx.enabled }}
+        nginx-config-hash: {{ print .Values.nginx.config.default "-" .Values.nginx.config.custom | sha256sum }}
+        {{- end }}      
+        {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- if .Values.lifecycle }}
+        lifecycle:
+        {{-   if .Values.lifecycle.postStartCommand }}
+          postStart:
+            exec:
+              command:
+                {{- toYaml .Values.lifecycle.postStartCommand | nindent 16 -}}
+        {{-   end }}
+        {{-   if .Values.lifecycle.preStopCommand }}
+          preStop:
+            exec:
+              command:
+                {{- toYaml .Values.lifecycle.preStopCommand | nindent 16 -}}
+        {{-   end }}
+        {{- end }}
+        env:
+{{- include "monica.env" . | indent 8 }}
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: {{ .Values.monica.containerPort | default "80" }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+      {{- if .Values.cronjob.enabled }}
+      - name: {{ .Chart.Name }}-cron
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /cron.sh
+        {{- if .Values.cronjob.lifecycle }}
+        lifecycle:
+        {{-   if .Values.cronjob.lifecycle.postStartCommand }}
+          postStart:
+            exec:
+              command:
+                {{- toYaml .Values.cronjob.lifecycle.postStartCommand | nindent 16 -}}
+        {{-   end }}
+        {{-   if .Values.cronjob.lifecycle.preStopCommand }}
+          preStop:
+            exec:
+              command:
+                {{- toYaml .Values.cronjob.lifecycle.preStopCommand | nindent 16 -}}
+        {{-   end }}
+        {{- end }}
+        env:
+{{- include "monica.env" . | indent 8 }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        volumeMounts:
+{{- include "monica.volumeMounts" . | trim | nindent 8 }}
+      {{- end }}
+      {{- if .Values.queue.enabled }}
+      - name: {{ .Chart.Name }}-schedule
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /queue.sh
+        {{- if .Values.queue.lifecycle }}
+        lifecycle:
+        {{-   if .Values.queue.lifecycle.postStartCommand }}
+          postStart:
+            exec:
+              command:
+                {{- toYaml .Values.queue.lifecycle.postStartCommand | nindent 16 -}}
+        {{-   end }}
+        {{-   if .Values.queue.lifecycle.preStopCommand }}
+          preStop:
+            exec:
+              command:
+                {{- toYaml .Values.queue.lifecycle.preStopCommand | nindent 16 -}}
+        {{-   end }}
+        {{- end }}
+        env:
+{{- include "monica.env" . | indent 8 }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        volumeMounts:
+{{- include "monica.volumeMounts" . | trim | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nginx.enabled }}
+      - name: {{ .Chart.Name }}-nginx
+        image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+        imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.monica.containerPort | default "80" }}
+          protocol: TCP
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: {{ .Values.monica.host | quote }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: {{ .Values.monica.host | quote }}
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+        {{- end }}
+
+        resources:
+{{ toYaml .Values.nginx.resources | indent 10 }}
+        volumeMounts:
+        {{- if .Values.persistence.enabled }}
+        - name: monica-data
+          mountPath: {{ .Values.monica.datadir }}
+        {{- end }}
+        - name: monica-nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      {{- end }}
+      {{- with .Values.monica.extraSidecarContainers }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.monica.extraInitContainers .Values.mariadb.enabled .Values.postgresql.enabled }}
+      initContainers:
+      {{- if .Values.monica.extraInitContainers }}
+      {{- toYaml .Values.monica.extraInitContainers | nindent 8 }}
+      {{- end }}
+      {{- if .Values.mariadb.enabled }}
+      - name: mariadb-isalive
+        image: {{ .Values.mariadb.image.registry }}/{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}
+        env:
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+                key: {{ .Values.externalDatabase.existingSecret.usernameKey | default "db-username" }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+                key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
+        command:
+          - "sh"
+          - "-c"
+          - {{ printf "until mysql --host=%s-mariadb --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --execute=\"SELECT 1;\"; do echo waiting for mysql; sleep 2; done;" .Release.Name }}
+      {{- else if .Values.postgresql.enabled }}
+      - name: postgresql-isready
+        image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+                key: {{ .Values.externalDatabase.existingSecret.usernameKey | default "db-username" }}
+        command:
+          - "sh"
+          - "-c"
+          - {{ printf "until pg_isready -h %s-postgresql -U ${POSTGRES_USER} ; do sleep 2 ; done" .Release.Name }}
+      {{- end }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      {{- if .Values.persistence.enabled }}
+      - name: monica-data
+        persistentVolumeClaim:
+          claimName: {{ if .Values.persistence.monicaData.existingClaim }}{{ .Values.persistence.monicaData.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-monica-data{{- end }}
+      {{- end }}
+      {{- if .Values.monica.configs }}
+      - name: monica-config
+        configMap:
+          name: {{ template "monica.fullname" . }}-config
+      {{- end }}
+      {{- if .Values.monica.phpConfigs }}
+      - name: monica-phpconfig
+        configMap:
+          name: {{ template "monica.fullname" . }}-phpconfig
+      {{- end }}
+      {{- if .Values.nginx.enabled }}
+      - name: monica-nginx-config
+        configMap:
+          name: {{ template "monica.fullname" . }}-nginxconfig
+      {{- end }}
+      {{- if .Values.monica.extraVolumes }}
+{{ toYaml .Values.monica.extraVolumes | indent 6 }}
+      {{- end }}
+      {{- if .Values.nginx.enabled }}
+      # Will mount configuration files as www-data (id: 82) for monica
+      securityContext:
+        fsGroup: 82
+        {{- if .Values.securityContext }}
+        {{- with .Values.securityContext }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+      {{- else }}
+      # Will mount configuration files as www-data (id: 33) for monica
+      securityContext:
+        fsGroup: 33
+        {{- if .Values.securityContext }}
+        {{- with .Values.securityContext }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ .Values.rbac.serviceaccount.name }}
+      {{- end }}

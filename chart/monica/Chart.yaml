@@ -1,0 +1,28 @@
+apiVersion: v2
+appVersion: "1.0.0"
+description: A Helm chart for Kubernetes to install Monica
+name: monica
+version: 1.0.0
+icon: https://www.monicahq.com/favicon.ico
+maintainers:
+  - name: MonicaHQ
+    url: https://github.com/monicahq/monica
+keywords:
+  - crm
+kubeVersion: ">=1.16.0-0"
+sources:
+  - https://github.com/monicahq/monica
+  - https://hub.docker.com/_/monica
+# dependencies:
+#   - name: postgresql
+#     version: 11.6.*
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: postgresql.enabled
+#   - name: mariadb
+#     version: 11.0.*
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: mariadb.enabled
+#   - name: redis
+#     version: 16.12.*
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: redis.enabled
