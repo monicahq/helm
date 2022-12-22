@@ -63,22 +63,19 @@ monica:
     enabled: false
     # secretName: nameofsecret
     # apiKey: base64_key
-    # smtpUsernameKey: smtp_username
-    # smtpPasswordKey: smtp_password
+    # mailUsernameKey: smtp_username
+    # mailPasswordKey: smtp_password
   # If web server is not binding default port, you can define it
   # containerPort: 8080
   storagedir: /var/www/html/storage
-  persistence:
-    subPath:
   mail:
     enabled: false
     fromAddress: user
-    domain: domain.com
+    replyToAddress: user
     smtp:
       host: domain.com
-      secure: ssl
+      encryption: tls
       port: 465
-      authtype: LOGIN
       name: user
       password: pass
   # PHP Configuration files
@@ -116,7 +113,7 @@ monica:
   #    image: busybox
   #    command: [/bin/sh, -c, 'while ! test -f "/run/monica/data/monica.log"; do sleep 1; done; tail -n+1 -f /run/monica/data/monica.log']
   #    volumeMounts:
-  #    - name: monica-data
+  #    - name: monica-storage
   #      mountPath: /run/monica/data
 
   # Extra mounts for the pods. Example shown is for connecting a legacy NFS volume
@@ -241,6 +238,8 @@ redis:
   auth:
     enabled: true
     password: secret
+    # existingSecret
+    # existingSecretPasswordKey
 
 ## Cronjob to execute monica scheduled tasks
 cronjob:
@@ -273,10 +272,10 @@ service:
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 ##
 persistence:
-  # monica Data (/var/www/html/storage)
+  # monica storage (/var/www/html/storage)
   enabled: false
   annotations: {}
-  ## monica data Persistent Volume Storage Class
+  ## monica storage Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
@@ -291,7 +290,7 @@ persistence:
   # existingClaim:
 
   accessMode: ReadWriteOnce
-  size: 8Gi
+  size: 4Gi
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -83,7 +83,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
-        - /cron.sh
+        - cron.sh
         {{- if .Values.cronjob.lifecycle }}
         lifecycle:
         {{-   if .Values.cronjob.lifecycle.postStartCommand }}
@@ -111,7 +111,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
-        - /queue.sh
+        - queue.sh
         {{- if .Values.queue.lifecycle }}
         lifecycle:
         {{-   if .Values.queue.lifecycle.postStartCommand }}
@@ -175,7 +175,7 @@ spec:
 {{ toYaml .Values.nginx.resources | indent 10 }}
         volumeMounts:
         {{- if .Values.persistence.enabled }}
-        - name: monica-data
+        - name: monica-storage
           mountPath: {{ .Values.monica.datadir }}
         {{- end }}
         - name: monica-nginx-config
@@ -237,9 +237,9 @@ spec:
     {{- end }}
       volumes:
       {{- if .Values.persistence.enabled }}
-      - name: monica-data
+      - name: monica-storage
         persistentVolumeClaim:
-          claimName: {{ if .Values.persistence.monicaData.existingClaim }}{{ .Values.persistence.monicaData.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-monica-data{{- end }}
+          claimName: {{ template "monica.fullname" . }}-storage
       {{- end }}
       {{- if .Values.monica.configs }}
       - name: monica-config

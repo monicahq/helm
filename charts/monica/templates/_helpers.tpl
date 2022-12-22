@@ -134,7 +134,7 @@ Create volume mounts for the monica storagedir.
 */}}
 {{- define "monica.volumeMounts" -}}
 {{- if .Values.persistence.enabled }}
-- name: monica-data
+- name: monica-storage
   mountPath: {{ .Values.monica.storagedir }}
 {{- end }}
 {{- if .Values.monica.extraVolumeMounts }}
@@ -145,5 +145,47 @@ Create volume mounts for the monica storagedir.
 - name: monica-phpconfig
   mountPath: {{ $nginxEnabled | ternary (printf "/usr/local/etc/php-fpm.d/%s" $key | quote) (printf "/usr/local/etc/php/conf.d/%s" $key | quote) }}
   subPath: {{ $key }}
+{{- end }}
+{{- if .Values.monica.mail.enabled }}
+- name: MAIL_MAILER
+  value: smtp
+- name: MAIL_HOST
+  value: {{ .Values.monica.mail.smtp.host | quote }}
+- name: MAIL_PORT
+  value: {{ .Values.monica.mail.smtp.port | quote }}
+- name: MAIL_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.monica.existingSecret.secretName | default (include "monica.fullname" .) }}
+      key: {{ .Values.monica.existingSecret.mailUsernameKey | default "smtp-username" }}
+- name: MAIL_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.monica.existingSecret.secretName | default (include "monica.fullname" .) }}
+      key: {{ .Values.monica.existingSecret.mailPasswordKey | default "smtp-password" }}
+- name: MAIL_ENCRYPTION
+  value: {{ .Values.monica.mail.smtp.encryption | quote }}
+- name: MAIL_FROM_ADDRESS
+  value: {{ .Values.monica.mail.fromAddress | quote }}
+- name: MAIL_REPLY_TO_ADDRESS
+  value: {{ .Values.monica.mail.replyToAddress | quote }}
+{{- end }}
+{{- if .Values.redis.enabled }}
+- name: REDIS_HOST
+  value: {{ template "monica.redis.fullname" . }}-master
+- name: REDIS_PORT
+  value: {{ .Values.redis.master.service.ports.redis | quote }}
+{{- if .Values.redis.auth.enabled }}
+{{- if and .Values.redis.auth.existingSecret .Values.redis.auth.existingSecretPasswordKey }}
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.redis.auth.existingSecret }}
+      key: {{ .Values.redis.auth.existingSecretPasswordKey }}
+{{- else }}
+- name: REDIS_PASSWORD
+  value: {{ .Values.redis.auth.password }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end -}}
