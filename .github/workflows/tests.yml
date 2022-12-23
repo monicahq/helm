@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Helm
-        uses: azure/setup-helm@v3.1
+        uses: azure/setup-helm@v3.5
         with:
           version: v3.6.3
 
@@ -28,29 +28,28 @@ jobs:
         uses: helm/chart-testing-action@v2.3.1
 
       - name: Run chart-testing (list-changed)
-        run: |
-          ct list-changed
-
-      - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "changed=true" >> $GITHUB_ENV
-          fi
+          ct list-changed --config ct.yaml
+
+      # - name: Run chart-testing (list-changed)
+      #   id: list-changed
+      #   run: |
+      #     changed=$(ct list-changed)
+      #     if [[ -n "$changed" ]]; then
+      #       echo "changed=true" >> $GITHUB_OUTPUT
+      #     fi
 
       - name: Run chart-testing (lint)
-        id: lint
-        if: steps.list-changed.outputs.changed == 'true'
+        # if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --config ct.yaml
 
       - name: Create kind cluster
-        uses: helm/kind-action@v1.4.0
+        uses: helm/kind-action@v1.5.0
+        # if: steps.list-changed.outputs.changed == 'true'
         with:
           install_local_path_provisioner: true
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        id: install
-        if: steps.list-changed.outputs.changed == 'true'
+        # if: steps.list-changed.outputs.changed == 'true'
         run: ct install --config ct.yaml
