@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "monica.labels" . | nindent 4 }}
   annotations:
-    helm.sh/hook: test
+    helm.sh/hook: test-success
 spec:
   serviceAccountName: {{ $fullName }}
   {{- if .Values.imagePullSecrets }}

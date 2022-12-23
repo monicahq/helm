@@ -77,8 +77,7 @@ spec:
       - name: {{ .Chart.Name }}-cron
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-        - cron.sh
+        command: [ 'cron.sh' ]
         {{- if .Values.cronjob.lifecycle }}
         lifecycle:
         {{-   if .Values.cronjob.lifecycle.postStartCommand }}
@@ -105,8 +104,7 @@ spec:
       - name: {{ .Chart.Name }}-schedule
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-        - queue.sh
+        command: [ 'queue.sh' ]
         {{- if .Values.queue.lifecycle }}
         lifecycle:
         {{-   if .Values.queue.lifecycle.postStartCommand }}
