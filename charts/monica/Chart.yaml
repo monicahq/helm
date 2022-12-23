@@ -1,7 +1,7 @@
 apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
-version: 1.0.2
+version: 0.0.1
 appVersion: 1.0.0
 icon: https://www.monicahq.com/favicon.ico
 maintainers:
@@ -26,3 +26,11 @@ dependencies:
     version: 16.12.*
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
+  - name: memcached
+    version: 6.3.*
+    repository: https://charts.bitnami.com/bitnami
+    condition: memcached.enabled
+  - name: meilisearch
+    version: 0.1.*
+    repository: https://meilisearch.github.io/meilisearch-kubernetes
+    condition: meilisearch.enabled

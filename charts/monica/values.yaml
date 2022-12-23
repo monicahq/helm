@@ -241,6 +241,10 @@ redis:
     # existingSecret
     # existingSecretPasswordKey
 
+meilisearch:
+  enabled: false
+
+
 ## Cronjob to execute monica scheduled tasks
 cronjob:
   enabled: false
