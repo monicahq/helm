@@ -28,6 +28,10 @@ jobs:
         uses: helm/chart-testing-action@v2.3.1
 
       - name: Run chart-testing (list-changed)
+        run: |
+          ct list-changed
+
+      - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
           changed=$(ct list-changed)
