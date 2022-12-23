@@ -17,7 +17,7 @@ spec:
     - name: unit-tests
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       imagePullPolicy: {{ .Values.image.pullPolicy }}
-      command: ['entrypoint.sh', 'apache', ';', 'php', 'artisan', 'monica:waitfordb']
+      command: ['entrypoint-unittests.sh']
       envFrom:
         - configMapRef:
             name: {{ $fullName }}
