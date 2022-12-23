@@ -1,0 +1,32 @@
+{{- $fullName := include "monica.fullname" . -}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ $fullName }}-unit-tests
+  labels:
+    app.kubernetes.io/name: {{ include "monica.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "monica.chart" . }}
+  annotations:
+    helm.sh/hook: test
+spec:
+  serviceAccountName: {{ $fullName }}
+  {{- if .Values.imagePullSecrets }}
+  imagePullSecrets:
+  - name: {{ .Values.imagePullSecrets }}
+  {{- end }}
+  containers:
+    - name: unit-tests
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      command: ['entrypoint.sh', 'apache', ';', 'php', 'artisan', 'monica:waitfordb']
+      envFrom:
+        - configMapRef:
+            name: {{ $fullName }}
+      env:
+        - name: APP_DEBUG
+          value: true
+      resources:
+        {{- toYaml .Values.tests.unitTests.resources | nindent 8 }}
+  restartPolicy: Never
