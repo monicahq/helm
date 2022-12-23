@@ -21,6 +21,9 @@ jobs:
       - name: Add dependency chart repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency list ./helm/monica
+          helm dependency update ./helm/monica
+
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.3.1
 
@@ -29,7 +32,7 @@ jobs:
         run: |
           changed=$(ct list-changed)
           if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_ENV
           fi
 
       - name: Run chart-testing (lint)
