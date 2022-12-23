@@ -241,6 +241,22 @@ redis:
     # existingSecret
     # existingSecretPasswordKey
 
+##
+## Memcached chart configuration
+## for more options see https://github.com/bitnami/charts/tree/main/bitnami/memcached
+##
+memcached:
+  enabled: false
+  auth:
+    enabled: true
+    password: secret
+    # existingSecret
+    # existingSecretPasswordKey
+
+##
+## Meilisearch chart configuration
+## for more options see https://github.com/meilisearch/meilisearch-kubernetes/tree/main/charts/meilisearch
+##
 meilisearch:
   enabled: false
 

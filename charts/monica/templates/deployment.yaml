@@ -25,6 +25,9 @@ spec:
         {{- if .Values.redis.enabled }}
         {{ template "monica.redis.fullname" . }}-client: "true"
         {{- end }}        
+        {{- if .Values.memcached.enabled }}
+        {{ template "monica.memcached.fullname" . }}-client: "true"
+        {{- end }}        
         {{- if .Values.podLabels }}
 {{ toYaml .Values.podLabels | indent 8 }}
         {{- end }}
