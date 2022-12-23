@@ -8,5 +8,11 @@ dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 16.12.3
-digest: sha256:26d3436ece41f0fbe00d0184c1cda7f5cccb7d49642982cfff49f113c11c0f34
-generated: "2022-12-21T23:05:03.656584025+01:00"
+- name: memcached
+  repository: https://charts.bitnami.com/bitnami
+  version: 6.3.2
+- name: meilisearch
+  repository: https://meilisearch.github.io/meilisearch-kubernetes
+  version: 0.1.44
+digest: sha256:b8d4730508ccfcd8a121dc1f729468f476114c7bc3da8b8e4309d4b60849a88d
+generated: "2022-12-23T18:39:53.1775839+01:00"

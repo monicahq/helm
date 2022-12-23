@@ -1,11 +1,13 @@
-name: Test Charts
-
+name: Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+env:
+  helm: v3.6.3
+
 jobs:
-  lint-test:
+  linter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -13,47 +15,52 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Helm
+      - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.6.3
+          version: ${{ env.helm }}
 
-      - name: Add dependency chart repos
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm dependency list ./charts/monica
-          helm dependency update ./charts/monica
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2
 
-      - name: Set target branch
-        id: target
-        run: |
-          if [ ! -z ${GITHUB_BASE_REF} ]; then
-            echo "branch=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
-          else
-            echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-          fi
+      - name: Run chart-testing (lint)
+        run: ct lint --config ct.yaml
+
+  helm-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.helm }}
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2
 
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --config ct.yaml --target-branch steps.target.outputs.branch)
+          changed=$(ct list-changed --config ct.yaml)
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
-
-      - name: Run chart-testing (lint)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --config ct.yaml --target-branch steps.target.outputs.branch
-
+  
       - name: Create kind cluster
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
-        with:
-          install_local_path_provisioner: true
 
       - name: Run chart-testing (install)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --config ct.yaml --target-branch steps.target.outputs.branch
+        run: ct install --config ct.yaml

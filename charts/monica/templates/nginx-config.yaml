@@ -4,10 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "monica.fullname" . }}-nginxconfig
   labels:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    helm.sh/chart: {{ include "monica.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "monica.labels" . | nindent 4 }}
 data:
   nginx.conf: |-
 {{- if .Values.nginx.config.default }}

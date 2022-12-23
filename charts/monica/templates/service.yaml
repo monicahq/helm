@@ -3,11 +3,7 @@ kind: Service
 metadata:
   name: {{ template "monica.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    helm.sh/chart: {{ include "monica.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/component: app
+    {{- include "monica.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   {{- if eq .Values.service.type "LoadBalancer" }}
@@ -22,6 +18,4 @@ spec:
     nodePort: {{ default "" .Values.service.nodePort}}
     {{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: app
+    {{- include "monica.selectorLabels" . | nindent 4 }}

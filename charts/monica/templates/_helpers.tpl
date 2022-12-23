@@ -31,6 +31,24 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "monica.labels" -}}
+helm.sh/chart: {{ include "monica.chart" . }}
+{{ include "monica.selectorLabels" . }}
+{{- if or .Chart.AppVersion .Values.image.tag }}
+app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.customLabels }}
+{{ toYaml .Values.customLabels }}
+{{- end }}
+{{- end -}}
+
+{{- define "monica.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "monica.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: app
+{{- end -}}
+
 {{/*
 Create a default fully qualified redis app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).

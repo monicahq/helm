@@ -3,14 +3,10 @@ kind: Deployment
 metadata:
   name: {{ template "monica.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/component: app
-    helm.sh/chart: {{ include "monica.chart" . }}
-  {{- if .Values.deploymentLabels }}
+    {{- include "monica.labels" . | nindent 4 }}
+    {{- if .Values.deploymentLabels }}
 {{ toYaml .Values.deploymentLabels | indent 4 }}
-  {{- end }}
+    {{- end }}
   {{- if .Values.deploymentAnnotations }}
   annotations:
 {{ toYaml .Values.deploymentAnnotations | indent 4 }}
@@ -21,15 +17,11 @@ spec:
 {{ toYaml .Values.monica.strategy | indent 4 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "monica.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/component: app
+      {{- include "monica.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "monica.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/component: app
+        {{- include "monica.selectorLabels" . | nindent 8 }}
         {{- if .Values.redis.enabled }}
         {{ template "monica.redis.fullname" . }}-client: "true"
         {{- end }}        
