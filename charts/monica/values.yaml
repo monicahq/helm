@@ -81,7 +81,7 @@ monica:
   # PHP Configuration files
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
   phpConfigs: {}
-  
+
   ## Strategy used to replace old pods
   ## IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
