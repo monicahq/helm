@@ -4,11 +4,7 @@ kind: Ingress
 metadata:
   name: {{ template "monica.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/component: app
-    helm.sh/chart: {{ include "monica.chart" . }}
+    {{- include "monica.labels" . | nindent 4 }}
 {{- if .Values.ingress.labels }}
 {{ toYaml .Values.ingress.labels | indent 4 }}
 {{- end }}

@@ -3,14 +3,10 @@ kind: Deployment
 metadata:
   name: {{ template "monica.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "monica.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/component: app
-    helm.sh/chart: {{ include "monica.chart" . }}
-  {{- if .Values.deploymentLabels }}
+    {{- include "monica.labels" . | nindent 4 }}
+    {{- if .Values.deploymentLabels }}
 {{ toYaml .Values.deploymentLabels | indent 4 }}
-  {{- end }}
+    {{- end }}
   {{- if .Values.deploymentAnnotations }}
   annotations:
 {{ toYaml .Values.deploymentAnnotations | indent 4 }}
@@ -21,17 +17,16 @@ spec:
 {{ toYaml .Values.monica.strategy | indent 4 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "monica.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/component: app
+      {{- include "monica.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "monica.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/component: app
+        {{- include "monica.selectorLabels" . | nindent 8 }}
         {{- if .Values.redis.enabled }}
         {{ template "monica.redis.fullname" . }}-client: "true"
+        {{- end }}        
+        {{- if .Values.memcached.enabled }}
+        {{ template "monica.memcached.fullname" . }}-client: "true"
         {{- end }}        
         {{- if .Values.podLabels }}
 {{ toYaml .Values.podLabels | indent 8 }}
@@ -82,8 +77,7 @@ spec:
       - name: {{ .Chart.Name }}-cron
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-        - cron.sh
+        command: [ 'cron.sh' ]
         {{- if .Values.cronjob.lifecycle }}
         lifecycle:
         {{-   if .Values.cronjob.lifecycle.postStartCommand }}
@@ -110,8 +104,7 @@ spec:
       - name: {{ .Chart.Name }}-schedule
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-        - queue.sh
+        command: [ 'queue.sh' ]
         {{- if .Values.queue.lifecycle }}
         lifecycle:
         {{-   if .Values.queue.lifecycle.postStartCommand }}
@@ -278,6 +271,6 @@ spec:
         {{- end }}
         {{- end }}
       {{- end }}
-      {{- if .Values.rbac.enabled }}
-      serviceAccountName: {{ .Values.rbac.serviceaccount.name }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "monica.serviceAccountName" . }}
       {{- end }}

@@ -3,8 +3,8 @@
 Expand the name of the chart.
 */}}
 {{- define "monica.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
 
 {{/*
 Create a default fully qualified app name.
@@ -12,24 +12,57 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "monica.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "monica.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "monica.labels" -}}
+helm.sh/chart: {{ include "monica.chart" . }}
+{{ include "monica.selectorLabels" . }}
+{{- if or .Chart.AppVersion .Values.image.tag }}
+app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "monica.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "monica.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: app
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "monica.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "monica.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
 
 {{/*
 Create a default fully qualified redis app name.
@@ -37,6 +70,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 */}}
 {{- define "monica.redis.fullname" -}}
 {{- printf "%s-%s" .Release.Name "redis" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create a default fully qualified memcached app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "monica.memcached.fullname" -}}
+{{- printf "%s-%s" .Release.Name "memcached" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "monica.ingress.apiVersion" -}}
@@ -186,6 +227,38 @@ Create volume mounts for the monica storagedir.
 - name: REDIS_PASSWORD
   value: {{ .Values.redis.auth.password }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- if .Values.memcached.enabled }}
+- name: MEMCACHED_HOST
+  value: {{ template "monica.memcached.fullname" . }}
+- name: MEMCACHED_PORT
+  value: {{ .Values.memcached.service.ports.memcached  | quote }}
+{{- if .Values.memcached.auth.enabled }}
+- name: MEMCACHED_USERNAME
+  value: {{ .Values.memcached.auth.username }}
+{{- if .Values.memcached.auth.existingPasswordSecret }}
+- name: MEMCACHED_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: memcached-password
+      key: {{ .Values.memcached.auth.existingPasswordSecret }}
+{{- else }}
+- name: MEMCACHED_PASSWORD
+  value: {{ .Values.memcached.auth.password }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if .Values.meilisearch.enabled }}
+- name: MEILISEARCH_HOST
+  value: {{ template "monica.meilisearch.fullname" . }}
+{{- if .Values.meilisearch.auth.existingMasterKeySecret }}
+- name: MEILISEARCH_KEY
+  valueFrom:
+    secretKeyRef:
+      name: MEILI_MASTER_KEY
+      key: {{ .Values.meilisearch.auth.existingMasterKeySecret }}
+{{- else }}
 {{- end }}
 {{- end }}
 {{- end -}}
