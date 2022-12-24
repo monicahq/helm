@@ -271,6 +271,6 @@ spec:
         {{- end }}
         {{- end }}
       {{- end }}
-      {{- if .Values.rbac.enabled }}
-      serviceAccountName: {{ .Values.rbac.serviceaccount.name }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "monica.serviceAccountName" . }}
       {{- end }}
