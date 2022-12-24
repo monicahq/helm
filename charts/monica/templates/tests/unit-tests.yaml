@@ -21,9 +21,6 @@ spec:
       envFrom:
         - configMapRef:
             name: {{ $fullName }}
-      env:
-        - name: APP_DEBUG
-          value: true
       resources:
         {{- toYaml .Values.tests.unitTests.resources | nindent 8 }}
   restartPolicy: Never
