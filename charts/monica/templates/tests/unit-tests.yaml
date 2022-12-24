@@ -8,7 +8,7 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
-  serviceAccountName: {{ $fullName }}
+  serviceAccountName: {{ include "monica.serviceAccountName" . }}
   {{- if .Values.imagePullSecrets }}
   imagePullSecrets:
   - name: {{ .Values.imagePullSecrets }}
@@ -18,9 +18,8 @@ spec:
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       imagePullPolicy: {{ .Values.image.pullPolicy }}
       command: ['entrypoint-unittests.sh']
-      envFrom:
-        - configMapRef:
-            name: {{ $fullName }}
+      env:
+        {{- include "monica.env" . | indent 8 }}
       resources:
         {{- toYaml .Values.tests.unitTests.resources | nindent 8 }}
   restartPolicy: Never
