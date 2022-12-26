@@ -62,7 +62,7 @@ monica:
   existingSecret:
     enabled: false
     # secretName: nameofsecret
-    # apiKey: base64_key
+    # appKey: base64_key
     # mailUsernameKey: smtp_username
     # mailPasswordKey: smtp_password
   # If web server is not binding default port, you can define it
@@ -76,7 +76,7 @@ monica:
       host: domain.com
       encryption: tls
       port: 465
-      name: user
+      username: user
       password: pass
   # PHP Configuration files
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
@@ -157,6 +157,7 @@ nginx:
 ##
 internalDatabase:
   enabled: true
+  ## Database fullpath file
   name: /var/www/html/database/monica.sqlite
 
 
@@ -259,7 +260,11 @@ memcached:
 ##
 meilisearch:
   enabled: false
-
+  environment:
+    MEILI_ENV: production
+    # MEILI_MASTER_KEY
+  auth:
+    # existingMasterKeySecret
 
 ## Cronjob to execute monica scheduled tasks
 cronjob:
