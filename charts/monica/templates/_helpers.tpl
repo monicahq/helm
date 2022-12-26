@@ -73,6 +73,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+Create a default fully qualified meilisearch app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "monica.meilisearch.fullname" -}}
+{{- printf "%s-%s" .Release.Name "meilisearch" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
 Create a default fully qualified memcached app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
@@ -102,6 +110,8 @@ Create environment variables used to configure the monica container as well as t
     secretKeyRef:
       name: {{ template "monica.fullname" . }}
       key: appkey
+- name: APP_URL
+  value: {{ (printf "https://%s" .Values.monica.host) | quote }}
 {{- if .Values.internalDatabase.enabled }}
 - name: DB_CONNECTION
   value: sqlite
@@ -167,25 +177,6 @@ Create environment variables used to configure the monica container as well as t
     secretKeyRef:
       name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
       key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
-{{- end }}
-{{- end -}}
-
-{{/*
-Create volume mounts for the monica storagedir.
-*/}}
-{{- define "monica.volumeMounts" -}}
-{{- if .Values.persistence.enabled }}
-- name: monica-storage
-  mountPath: {{ .Values.monica.storagedir }}
-{{- end }}
-{{- if .Values.monica.extraVolumeMounts }}
-{{ toYaml .Values.monica.extraVolumeMounts }}
-{{- end }}
-{{- $nginxEnabled := .Values.nginx.enabled -}}
-{{- range $key, $value := .Values.monica.phpConfigs }}
-- name: monica-phpconfig
-  mountPath: {{ $nginxEnabled | ternary (printf "/usr/local/etc/php-fpm.d/%s" $key | quote) (printf "/usr/local/etc/php/conf.d/%s" $key | quote) }}
-  subPath: {{ $key }}
 {{- end }}
 {{- if .Values.monica.mail.enabled }}
 - name: MAIL_MAILER
@@ -256,9 +247,28 @@ Create volume mounts for the monica storagedir.
 - name: MEILISEARCH_KEY
   valueFrom:
     secretKeyRef:
-      name: MEILI_MASTER_KEY
-      key: {{ .Values.meilisearch.auth.existingMasterKeySecret }}
+      name: {{ template "monica.meilisearch.fullname" . }}-master-key
+      key: MEILI_MASTER_KEY
 {{- else }}
 {{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Create volume mounts for the monica storagedir.
+*/}}
+{{- define "monica.volumeMounts" -}}
+{{- if .Values.persistence.enabled }}
+- name: monica-storage
+  mountPath: {{ .Values.monica.storagedir }}
+{{- end }}
+{{- if .Values.monica.extraVolumeMounts }}
+{{ toYaml .Values.monica.extraVolumeMounts }}
+{{- end }}
+{{- $nginxEnabled := .Values.nginx.enabled -}}
+{{- range $key, $value := .Values.monica.phpConfigs }}
+- name: monica-phpconfig
+  mountPath: {{ $nginxEnabled | ternary (printf "/usr/local/etc/php-fpm.d/%s" $key | quote) (printf "/usr/local/etc/php/conf.d/%s" $key | quote) }}
+  subPath: {{ $key }}
 {{- end }}
 {{- end -}}
