@@ -3,7 +3,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "monica.fullname" . }}-monica
+  name: {{ template "monica.fullname" . }}-storage
   labels:
     {{- include "monica.labels" . | nindent 4 }}
 {{- if .Values.persistence.annotations }}

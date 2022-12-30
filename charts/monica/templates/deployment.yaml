@@ -232,7 +232,7 @@ spec:
       {{- if .Values.persistence.enabled }}
       - name: monica-storage
         persistentVolumeClaim:
-          claimName: {{ template "monica.fullname" . }}-storage
+          claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
       {{- end }}
       {{- if .Values.monica.configs }}
       - name: monica-config
