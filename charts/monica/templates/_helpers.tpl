@@ -124,7 +124,7 @@ Create environment variables used to configure the monica container as well as t
   value: {{ template "mariadb.primary.fullname" .Subcharts.mariadb }}
 - name: DB_DATABASE
   value: {{ .Values.mariadb.auth.database | quote }}
-- name: DB_USER
+- name: DB_USERNAME
   valueFrom:
     secretKeyRef:
       name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
@@ -145,7 +145,7 @@ Create environment variables used to configure the monica container as well as t
   {{ else }}
   value: {{ .Values.postgresql.global.postgresql.auth.database | quote }}
   {{- end }}
-- name: DB_USER
+- name: DB_USERNAME
   valueFrom:
     secretKeyRef:
       name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
@@ -167,7 +167,7 @@ Create environment variables used to configure the monica container as well as t
   value: {{ .Values.externalDatabase.host | quote }}
 - name: DB_DATABASE
   value: {{ .Values.externalDatabase.database | quote }}
-- name: DB_USER
+- name: DB_USERNAME
   valueFrom:
     secretKeyRef:
       name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
