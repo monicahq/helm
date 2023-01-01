@@ -101,7 +101,7 @@ spec:
 {{- include "monica.volumeMounts" . | trim | nindent 8 }}
       {{- end }}
       {{- if .Values.queue.enabled }}
-      - name: {{ .Chart.Name }}-schedule
+      - name: {{ .Chart.Name }}-queue
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: [ 'queue.sh' ]
