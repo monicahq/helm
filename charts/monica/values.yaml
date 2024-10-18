@@ -251,9 +251,12 @@ memcached:
   enabled: false
   auth:
     enabled: true
+    username: monica
     password: secret
     # existingSecret
     # existingSecretPasswordKey
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
 
 ##
 ## Meilisearch chart configuration

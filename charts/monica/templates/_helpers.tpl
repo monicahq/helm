@@ -138,7 +138,7 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_CONNECTION
   value: pgsql
 - name: DB_HOST
-  value: {{ template "postgresql.primary.fullname" .Subcharts.postgresql }}
+  value: {{ template "postgresql.v1.primary.fullname" .Subcharts.postgresql }}
 - name: DB_DATABASE
   {{- if .Values.postgresql.auth.database }}
   value: {{ .Values.postgresql.auth.database | quote }}

@@ -33,6 +33,8 @@ jobs:
 
   helm-tests:
     runs-on: ubuntu-latest
+    name: Helm tests (${{ matrix.test_cases.name }})
+
     strategy:
       fail-fast: false
       matrix:
@@ -41,15 +43,19 @@ jobs:
           - name: 'Default - no custom values'
 
           # test the helm chart with postgresql subchart enabled
-          - name: PostgreSQL Enabled
-            helm_args: '--helm-extra-set-args "--set=postgresql.enabled=true --set=postgresql.global.postgresql.auth.password=testing123456 --set=internalDatabase.enabled=false --set=externalDatabase.enabled=True --set=externalDatabase.type=postgresql --set=externalDatabase.password=testing12345"'
+          - name: PostgreSQL enabled
+            helm_args: '--helm-extra-set-args "--set=postgresql.enabled=true --set=internalDatabase.enabled=false"'
 
-          # test the helm chart with nginx container enabled
-          - name: Nginx Enabled
-            helm_args: '--helm-extra-set-args "--set=image.flavor=fpm --set=nginx.enabled=true"'
+          # test the helm chart with mariadb subchart enabled
+          - name: Mariadb enabled
+            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false"'
+
+          # test the helm chart with all options
+          - name: Redis and queue enabled
+            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false --set=redis.enabled=true --set=memcached.enabled=true --set=cronjob.enabled=true --set=queue.enabled=true"'
 
           # test the helm chart with horizontal pod autoscaling enabled
-          - name: Horizontal Pod Autoscaling Enabled
+          - name: Horizontal Pod Autoscaling enabled
             helm_args: '--helm-extra-set-args "--set=hpa.enabled=true --set=hpa.minPods=2 --set=hpa.maxPods=3 --set=hpa.targetCPUUtilizationPercentage=75"'
 
     steps:
