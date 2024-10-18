@@ -1,7 +1,5 @@
-remote: origin
 helm-extra-args: --timeout 600s
 helm-lint-extra-args: --quiet
-target-branch: main
 chart-dirs:
   - charts
 chart-repos:
