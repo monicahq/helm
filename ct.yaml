@@ -1,7 +1,4 @@
 remote: origin
-target-branch: main
-helm-extra-args: --timeout 600s
-helm-lint-extra-args: --quiet
 chart-dirs:
   - charts
 chart-repos:
