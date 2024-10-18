@@ -33,6 +33,25 @@ jobs:
 
   helm-tests:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test_cases:
+          # test the plain helm chart with nothing changed
+          - name: 'Default - no custom values'
+
+          # test the helm chart with postgresql subchart enabled
+          - name: PostgreSQL Enabled
+            helm_args: '--helm-extra-set-args "--set=postgresql.enabled=true --set=postgresql.global.postgresql.auth.password=testing123456 --set=internalDatabase.enabled=false --set=externalDatabase.enabled=True --set=externalDatabase.type=postgresql --set=externalDatabase.password=testing12345"'
+
+          # test the helm chart with nginx container enabled
+          - name: Nginx Enabled
+            helm_args: '--helm-extra-set-args "--set=image.flavor=fpm --set=nginx.enabled=true"'
+
+          # test the helm chart with horizontal pod autoscaling enabled
+          - name: Horizontal Pod Autoscaling Enabled
+            helm_args: '--helm-extra-set-args "--set=hpa.enabled=true --set=hpa.minPods=2 --set=hpa.maxPods=3 --set=hpa.targetCPUUtilizationPercentage=75"'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,5 +82,5 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
-      - name: Run chart-testing (install)
-        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }}
+      - name: Run chart-testing (install ${{ matrix.test_cases.name }})
+        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} ${{ matrix.test_cases.helm_args }}
