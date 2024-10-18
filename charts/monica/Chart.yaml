@@ -3,7 +3,7 @@ name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
 version: 1.0.7
-appVersion: "1.0.0"
+appVersion: "5.0.0"
 icon: https://www.monicahq.com/favicon.ico
 maintainers:
   - name: MonicaHQ
