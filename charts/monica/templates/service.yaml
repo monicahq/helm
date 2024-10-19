@@ -10,12 +10,12 @@ spec:
   loadBalancerIP: {{ default "" .Values.service.loadBalancerIP }}
   {{- end }}
   ports:
-  - port: {{ .Values.service.port }}
-    targetPort: http
-    protocol: TCP
-    name: http
-    {{- if eq .Values.service.type "NodePort" }}
-    nodePort: {{ default "" .Values.service.nodePort}}
-    {{- end }}
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: {{ default "" .Values.service.nodePort }}
+      {{- end }}
   selector:
     {{- include "monica.selectorLabels" . | nindent 4 }}

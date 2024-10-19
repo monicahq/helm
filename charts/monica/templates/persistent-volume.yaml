@@ -6,10 +6,10 @@ metadata:
   name: {{ template "monica.fullname" . }}-storage
   labels:
     {{- include "monica.labels" . | nindent 4 }}
-{{- if .Values.persistence.annotations }}
+  {{- if .Values.persistence.annotations }}
   annotations:
-{{ toYaml .Values.persistence.annotations | indent 4 }}
-{{- end }}
+    {{ toYaml .Values.persistence.annotations | indent 4 }}
+  {{- end }}
 spec:
   accessModes:
     - {{ .Values.persistence.accessMode | quote }}

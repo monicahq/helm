@@ -168,7 +168,7 @@ data:
             }
         }
     }
-{{- else }}
-{{ .Values.nginx.config.custom | indent 4 }}
-{{- end }}
+  {{- else }}
+    {{ .Values.nginx.config.custom | indent 4 }}
+  {{- end }}
 {{- end }}

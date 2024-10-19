@@ -68,12 +68,6 @@ monica:
   # If web server is not binding default port, you can define it
   # containerPort: 8080
   storagedir: /var/www/html/storage
-  # Cache store: database, file, memcached, redis, dynamodb
-  cacheStore:
-  # Queue connection: sync, database, beanstalkd, sqs, redis
-  queueConnection:
-  # Session driver: file, cookie, database, apc, memcached, redis, array
-  sessionDriver:
   mail:
     enabled: false
     fromAddress: user
@@ -119,8 +113,8 @@ monica:
   #    image: busybox
   #    command: [/bin/sh, -c, 'while ! test -f "/run/monica/data/monica.log"; do sleep 1; done; tail -n+1 -f /run/monica/data/monica.log']
   #    volumeMounts:
-  #    - name: monica-storage
-  #      mountPath: /run/monica/data
+  #      - name: monica-storage
+  #        mountPath: /run/monica/data
 
   # Extra mounts for the pods. Example shown is for connecting a legacy NFS volume
   # to monica pods in Kubernetes. This can then be configured in External Storage
@@ -157,7 +151,6 @@ nginx:
 
   resources: {}
 
-
 ##
 ## Internal database configuration (SQLite)
 ##
@@ -165,7 +158,6 @@ internalDatabase:
   enabled: true
   ## Database fullpath file
   name: /var/www/html/database/monica.sqlite
-
 
 ##
 ## External database configuration

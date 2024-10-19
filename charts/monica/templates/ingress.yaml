@@ -5,39 +5,39 @@ metadata:
   name: {{ template "monica.fullname" . }}
   labels:
     {{- include "monica.labels" . | nindent 4 }}
-{{- if .Values.ingress.labels }}
-{{ toYaml .Values.ingress.labels | indent 4 }}
-{{- end }}
-{{- if .Values.ingress.annotations }}
+    {{- with .Values.ingress.labels }}
+    {{ toYaml . | indent 4 }}
+    {{- end }}
+  {{- if .Values.ingress.annotations }}
   annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
-{{- end }}
+    {{ toYaml .Values.ingress.annotations | indent 4 }}
+  {{- end }}
 spec:
   {{- if .Values.ingress.className }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   rules:
-  - {{- if .Values.monica.host }}
-    host: {{ .Values.monica.host }}
-    {{- end }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.path }}
-        {{- if eq (include "monica.ingress.apiVersion" $) "networking.k8s.io/v1" }}
-        pathType: {{ .Values.ingress.pathType }}
-        {{- end }}
-        backend:
-          {{- if eq (include "monica.ingress.apiVersion" $) "networking.k8s.io/v1" }}
-          service:
-            name: {{ template "monica.fullname" . }}
-            port:
-              number: {{ .Values.service.port }}
-          {{- else }}
-          serviceName: {{ template "monica.fullname" . }}
-          servicePort: {{ .Values.service.port }}
-          {{- end }}
-{{- if .Values.ingress.tls }}
+    - {{- if .Values.monica.host }}
+      host: {{ .Values.monica.host }}
+      {{- end }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path }}
+            {{- if eq (include "monica.ingress.apiVersion" $) "networking.k8s.io/v1" }}
+            pathType: {{ .Values.ingress.pathType }}
+            {{- end }}
+            backend:
+              {{- if eq (include "monica.ingress.apiVersion" $) "networking.k8s.io/v1" }}
+              service:
+                name: {{ template "monica.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+              {{- else }}
+              serviceName: {{ template "monica.fullname" . }}
+              servicePort: {{ .Values.service.port }}
+              {{- end }}
+  {{- if .Values.ingress.tls }}
   tls:
-{{ toYaml .Values.ingress.tls | indent 4 }}
-{{- end -}}
+    {{ toYaml .Values.ingress.tls | indent 4 }}
+  {{- end }}
 {{- end }}

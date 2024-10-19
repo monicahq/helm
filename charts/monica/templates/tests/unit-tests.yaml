@@ -11,13 +11,13 @@ spec:
   serviceAccountName: {{ include "monica.serviceAccountName" . }}
   {{- if .Values.imagePullSecrets }}
   imagePullSecrets:
-  - name: {{ .Values.imagePullSecrets }}
+    - name: {{ .Values.imagePullSecrets }}
   {{- end }}
   containers:
     - name: unit-tests
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       imagePullPolicy: {{ .Values.image.pullPolicy }}
-      command: ['entrypoint-unittests.sh']
+      command: ['/bin/sh', '-c', 'sleep 20 && entrypoint-unittests.sh']
       env:
         {{- include "monica.env" . | indent 8 }}
       resources:
