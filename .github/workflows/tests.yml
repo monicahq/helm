@@ -45,17 +45,14 @@ jobs:
           # test the helm chart with postgresql subchart enabled
           - name: PostgreSQL enabled
             file: postgresql.yaml
-            helm_args: '--helm-extra-set-args "--set=postgresql.enabled=true --set=internalDatabase.enabled=false"'
 
           # test the helm chart with mariadb subchart enabled
           - name: Mariadb enabled
             file: mariadb.yaml
-            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false"'
 
           # test the helm chart with all options
           - name: Redis and queue enabled
             file: redis-queue.yaml
-            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false --set=cronjob.enabled=true --set=queue.enabled=true --set=monica.cacheStore=memcached --set=monica.queueConnection=redis --set=redis.enabled=true --set=redis.master.persistence.enabled=false --set=redis.architecture=standalone --set=memcached.enabled=true"'
 
     steps:
       - name: Checkout
