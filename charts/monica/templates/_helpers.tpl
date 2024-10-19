@@ -102,8 +102,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Create environment variables used to configure the monica container as well as the cron and schedule containers.
 */}}
 {{- define "monica.env" -}}
-{{- if .Values.monica.extraEnv }}
-{{ toYaml .Values.monica.extraEnv }}
+{{- with .Values.monica.extraEnv }}
+{{ toYaml . }}
 {{- end }}
 - name: APP_KEY
   valueFrom:
@@ -262,8 +262,8 @@ Create volume mounts for the monica storagedir.
 - name: monica-storage
   mountPath: {{ .Values.monica.storagedir }}
 {{- end }}
-{{- if .Values.monica.extraVolumeMounts }}
-{{ toYaml .Values.monica.extraVolumeMounts }}
+{{- with .Values.monica.extraVolumeMounts }}
+{{ toYaml . }}
 {{- end }}
 {{- $nginxEnabled := .Values.nginx.enabled -}}
 {{- range $key, $value := .Values.monica.phpConfigs }}

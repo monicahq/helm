@@ -9,9 +9,9 @@ metadata:
     {{- with .Values.ingress.labels }}
     {{ toYaml . | indent 4 }}
     {{- end }}
-  {{- if .Values.ingress.annotations }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    {{ toYaml .Values.ingress.annotations | indent 4 }}
+    {{ toYaml . | indent 4 }}
   {{- end }}
 spec:
   {{- if .Values.ingress.className }}
@@ -37,8 +37,8 @@ spec:
               serviceName: {{ template "monica.fullname" . }}
               servicePort: {{ .Values.service.port }}
               {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- with .Values.ingress.tls }}
   tls:
-    {{ toYaml .Values.ingress.tls | indent 4 }}
+    {{ toYaml . | indent 4 }}
   {{- end }}
 {{- end }}

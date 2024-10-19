@@ -84,21 +84,21 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'cron.sh' ]
-          {{- if .Values.cronjob.lifecycle }}
+          {{- with .Values.cronjob.lifecycle }}
           lifecycle:
-          {{-   if .Values.cronjob.lifecycle.postStartCommand }}
+            {{- with .postStartCommand }}
             postStart:
               exec:
                 command:
-                  {{- toYaml .Values.cronjob.lifecycle.postStartCommand | nindent 18 }}
-          {{-   end }}
-          {{-   if .Values.cronjob.lifecycle.preStopCommand }}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
+            {{- if .preStopCommand }}
             preStop:
               exec:
                 command:
-                  {{- toYaml .Values.cronjob.lifecycle.preStopCommand | nindent 18 }}
-          {{-   end }}
-          {{- end }}{{/* cronjob.lifecycle */}}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
+          {{- end }}
           env:
             {{- include "monica.env" . | indent 12 }}
           resources:
