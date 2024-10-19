@@ -4,7 +4,7 @@ Expand the name of the chart.
 */}}
 {{- define "monica.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
@@ -22,14 +22,14 @@ If release name contains chart name it will be used as a full name.
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "monica.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Common labels
@@ -41,7 +41,7 @@ helm.sh/chart: {{ include "monica.chart" . }}
 app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Selector labels
@@ -50,7 +50,7 @@ Selector labels
 app.kubernetes.io/name: {{ include "monica.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: app
-{{- end }}
+{{- end -}}
 
 {{/*
 Create the name of the service account to use
@@ -61,7 +61,7 @@ Create the name of the service account to use
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
-{{- end }}
+{{- end -}}
 
 
 {{/*
@@ -69,7 +69,7 @@ Create a default fully qualified redis app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "monica.redis.fullname" -}}
-{{- printf "%s-%s" .Release.Name "redis" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-redis" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -77,7 +77,7 @@ Create a default fully qualified meilisearch app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "monica.meilisearch.fullname" -}}
-{{- printf "%s-%s" .Release.Name "meilisearch" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-meilisearch" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -85,7 +85,7 @@ Create a default fully qualified memcached app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "monica.memcached.fullname" -}}
-{{- printf "%s-%s" .Release.Name "memcached" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-memcached" .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "monica.ingress.apiVersion" -}}
@@ -127,12 +127,12 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_USERNAME
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.usernameKey | default "db-username" }}
 - name: DB_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
 {{- else if .Values.postgresql.enabled }}
 - name: DB_CONNECTION
@@ -148,12 +148,12 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_USERNAME
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.usernameKey | default "db-username" }}
 - name: DB_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
 {{- else }}
   {{- if eq .Values.externalDatabase.type "postgresql" }}
@@ -170,25 +170,13 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_USERNAME
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.usernameKey | default "db-username" }}
 - name: DB_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
+      name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-db" .Release.Name) }}
       key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
-{{- end }}
-{{- if .Values.monica.cacheStore }}
-- name: CACHE_STORE
-  value: {{ .Values.monica.cacheStore | quote }}
-{{- end }}
-{{- if .Values.monica.queueConnection }}
-- name: QUEUE_CONNECTION
-  value: {{ .Values.monica.queueConnection | quote }}
-{{- end }}
-{{- if .Values.monica.sessionDriver }}
-- name: SESSION_DRIVER
-  value: {{ .Values.monica.sessionDriver | quote }}
 {{- end }}
 {{- if .Values.monica.mail.enabled }}
 - name: MAIL_MAILER

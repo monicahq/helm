@@ -17,19 +17,19 @@ sources:
 dependencies:
   - name: postgresql
     version: 16.0.*
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: postgresql.enabled
   - name: mariadb
     version: 19.1.*
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: mariadb.enabled
   - name: redis
     version: 20.2.*
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: redis.enabled
   - name: memcached
     version: 7.5.*
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     condition: memcached.enabled
   - name: meilisearch
     version: 0.10.*

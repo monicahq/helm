@@ -1,4 +1,5 @@
 {{- if .Values.ingress.enabled }}
+---
 apiVersion: {{ include "monica.ingress.apiVersion" . }}
 kind: Ingress
 metadata:

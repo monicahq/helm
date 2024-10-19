@@ -1,15 +1,16 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "monica.fullname" . }}
   labels:
     {{- include "monica.labels" . | nindent 4 }}
-    {{- if .Values.deploymentLabels }}
-    {{ toYaml .Values.deploymentLabels | indent 4 }}
+    {{- with .Values.deploymentLabels }}
+    {{ toYaml . | indent 4 }}
     {{- end }}
-  {{- if .Values.deploymentAnnotations }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
-    {{ toYaml .Values.deploymentAnnotations | indent 4 }}
+    {{ toYaml . | indent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -50,29 +51,33 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.lifecycle }}
+          {{- with .Values.lifecycle }}
           lifecycle:
-          {{-   if .Values.lifecycle.postStartCommand }}
+            {{- with .postStartCommand }}
             postStart:
               exec:
                 command:
-                  {{- toYaml .Values.lifecycle.postStartCommand | nindent 18 -}}
-          {{-   end }}
-          {{-   if .Values.lifecycle.preStopCommand }}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
+            {{- if .preStopCommand }}
             preStop:
               exec:
                 command:
-                  {{- toYaml .Values.lifecycle.preStopCommand | nindent 18 -}}
-          {{-   end }}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
           {{- end }}
           env:
             {{- include "monica.env" . | indent 12 }}
+          {{- if not .Values.nginx.enabled }}
           ports:
             - name: http
               protocol: TCP
               containerPort: {{ .Values.monica.containerPort | default "80" }}
+          {{- end }}
           resources:
             {{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            {{- include "monica.volumeMounts" . | trim | nindent 12 }}
 
         {{- if .Values.cronjob.enabled }}
         - name: {{ .Chart.Name }}-cron
@@ -85,13 +90,13 @@ spec:
             postStart:
               exec:
                 command:
-                  {{- toYaml .Values.cronjob.lifecycle.postStartCommand | nindent 18 -}}
+                  {{- toYaml .Values.cronjob.lifecycle.postStartCommand | nindent 18 }}
           {{-   end }}
           {{-   if .Values.cronjob.lifecycle.preStopCommand }}
             preStop:
               exec:
                 command:
-                  {{- toYaml .Values.cronjob.lifecycle.preStopCommand | nindent 18 -}}
+                  {{- toYaml .Values.cronjob.lifecycle.preStopCommand | nindent 18 }}
           {{-   end }}
           {{- end }}{{/* cronjob.lifecycle */}}
           env:
@@ -107,20 +112,20 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'queue.sh' ]
-          {{- if .Values.queue.lifecycle }}
+          {{- with .Values.queue.lifecycle }}
           lifecycle:
-          {{-   if .Values.queue.lifecycle.postStartCommand }}
+            {{- if .postStartCommand }}
             postStart:
               exec:
                 command:
-                  {{- toYaml .Values.queue.lifecycle.postStartCommand | nindent 18 -}}
-          {{-   end }}
-          {{-   if .Values.queue.lifecycle.preStopCommand }}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
+            {{- if .preStopCommand }}
             preStop:
               exec:
                 command:
-                  {{- toYaml .Values.queue.lifecycle.preStopCommand | nindent 18 -}}
-          {{-   end }}
+                  {{- toYaml . | nindent 18 }}
+            {{- end }}
           {{- end }}
           env:
             {{- include "monica.env" . | indent 12 }}
@@ -136,36 +141,40 @@ spec:
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.monica.containerPort | default "80" }}
+              containerPort: {{ .Values.monica.containerPort | default "http" }}
               protocol: TCP
-          {{- if .Values.livenessProbe.enabled }}
+          {{- with .Values.livenessProbe }}
+          {{- if .enabled }}
           livenessProbe:
             httpGet:
               path: /status.php
-              port: http
+              port: {{ $.Values.nextcloud.containerPort | default "http" }}
               httpHeaders:
                 - name: Host
-                  value: {{ .Values.monica.host | quote }}
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-            successThreshold: {{ .Values.livenessProbe.successThreshold }}
-            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+                  value: {{ $.Values.monica.host | quote }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            successThreshold: {{ .successThreshold }}
+            failureThreshold: {{ .failureThreshold }}
           {{- end }}{{/* livenessProbe.enabled */}}
-          {{- if .Values.readinessProbe.enabled }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          {{- if .enabled }}
           readinessProbe:
             httpGet:
               path: /status.php
-              port: http
+              port: {{ $.Values.nextcloud.containerPort | default "http" }}
               httpHeaders:
                 - name: Host
-                  value: {{ .Values.monica.host | quote }}
-            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-            successThreshold: {{ .Values.readinessProbe.successThreshold }}
-            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+                  value: {{ $.Values.monica.host | quote }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            successThreshold: {{ .successThreshold }}
+            failureThreshold: {{ .failureThreshold }}
           {{- end }}{{/* readinessProbe.enabled */}}
+          {{- end }}
           resources:
             {{ toYaml .Values.nginx.resources | indent 12 }}
           volumeMounts:
@@ -176,6 +185,9 @@ spec:
             - name: monica-nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            {{- with .Values.monica.extraVolumeMounts }}
+            {{ toYaml . | indent 12 }}
+            {{- end }}
         {{- end }}{{/* nginx.enabled */}}
 
       {{- with .Values.monica.extraSidecarContainers }}
