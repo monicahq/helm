@@ -68,9 +68,12 @@ monica:
   # If web server is not binding default port, you can define it
   # containerPort: 8080
   storagedir: /var/www/html/storage
-  cacheStore: # database, file, memcached, redis, dynamodb
-  queueConnection: # sync, database, beanstalkd, sqs, redis
-  sessionDriver: # file, cookie, database, apc, memcached, redis, array
+  # Cache store: database, file, memcached, redis, dynamodb
+  cacheStore:
+  # Queue connection: sync, database, beanstalkd, sqs, redis
+  queueConnection:
+  # Session driver: file, cookie, database, apc, memcached, redis, array
+  sessionDriver:
   mail:
     enabled: false
     fromAddress: user
