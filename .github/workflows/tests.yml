@@ -52,7 +52,7 @@ jobs:
 
           # test the helm chart with all options
           - name: Redis and queue enabled
-            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false --set=redis.enabled=true --set=memcached.enabled=true --set=cronjob.enabled=true --set=queue.enabled=true"'
+            helm_args: '--helm-extra-set-args "--set=mariadb.enabled=true --set=internalDatabase.enabled=false --set=monica.cacheStore=memcached --set=monica.queueConnection=redis --set=redis.enabled=true --set=memcached.enabled=true --set=cronjob.enabled=true --set=queue.enabled=true"'
 
           # test the helm chart with horizontal pod autoscaling enabled
           - name: Horizontal Pod Autoscaling enabled
@@ -88,5 +88,5 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
-      - name: Run chart-testing (install ${{ matrix.test_cases.name }})
+      - name: Run chart-testing (install)
         run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} ${{ matrix.test_cases.helm_args }}

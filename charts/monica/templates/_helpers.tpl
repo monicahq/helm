@@ -178,6 +178,18 @@ Create environment variables used to configure the monica container as well as t
       name: {{ .Values.externalDatabase.existingSecret.secretName | default (printf "%s-%s" .Release.Name "db") }}
       key: {{ .Values.externalDatabase.existingSecret.passwordKey | default "db-password" }}
 {{- end }}
+{{- if .Values.monica.cacheStore }}
+- name: CACHE_STORE
+  value: {{ .Values.monica.cacheStore | quote }}
+{{- end }}
+{{- if .Values.monica.queueConnection }}
+- name: QUEUE_CONNECTION
+  value: {{ .Values.monica.queueConnection | quote }}
+{{- end }}
+{{- if .Values.monica.sessionDriver }}
+- name: SESSION_DRIVER
+  value: {{ .Values.monica.sessionDriver | quote }}
+{{- end }}
 {{- if .Values.monica.mail.enabled }}
 - name: MAIL_MAILER
   value: smtp
