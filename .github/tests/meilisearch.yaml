@@ -1,0 +1,20 @@
+meilisearch:
+  enabled: true
+
+internalDatabase:
+  enabled: false
+
+mariadb:
+  enabled: true
+
+monica:
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: database
+    - name: SCOUT_DRIVER
+      value: meilisearch
+    - name: SCOUT_QUEUE
+      value: "true"
+
+  queue:
+    enabled: true

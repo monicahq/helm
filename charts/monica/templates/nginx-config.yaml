@@ -1,4 +1,5 @@
 {{- if .Values.nginx.enabled -}}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -168,7 +169,7 @@ data:
             }
         }
     }
-{{- else }}
-{{ .Values.nginx.config.custom | indent 4 }}
-{{- end }}
+  {{- else }}
+    {{ .Values.nginx.config.custom | indent 4 }}
+  {{- end }}
 {{- end }}

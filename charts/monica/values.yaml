@@ -1,6 +1,8 @@
 image:
   repository: ghcr.io/monicahq/monica-next
   tag: main
+  # repository: monica
+  # tag: 5.0-apache
   pullPolicy: IfNotPresent
   # pullSecrets:
   #   - myRegistrKeySecretName
@@ -113,11 +115,10 @@ monica:
   #    image: busybox
   #    command: [/bin/sh, -c, 'while ! test -f "/run/monica/data/monica.log"; do sleep 1; done; tail -n+1 -f /run/monica/data/monica.log']
   #    volumeMounts:
-  #    - name: monica-storage
-  #      mountPath: /run/monica/data
+  #      - name: monica-storage
+  #        mountPath: /run/monica/data
 
-  # Extra mounts for the pods. Example shown is for connecting a legacy NFS volume
-  # to monica pods in Kubernetes. This can then be configured in External Storage
+  # Extra mounts for the pods.
   extraVolumes:
   #  - name: nfs
   #    nfs:
@@ -126,7 +127,7 @@ monica:
   #      readOnly: false
   extraVolumeMounts:
   #  - name: nfs
-  #    mountPath: "/legacy_data"
+  #    mountPath: "/monica_data"
 
   # Extra secuurityContext parameters. For example you may need to define runAsNonRoot directive
   # extraSecurityContext:
@@ -134,6 +135,31 @@ monica:
   #   runAsGroup: "33"
   #   runAsNonRoot: true
   #   readOnlyRootFilesystem: true
+
+  ##
+  ## Cronjob to execute monica scheduled tasks
+  ##
+  cronjob:
+    enabled: false
+
+    # Allow configuration of lifecycle hooks
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
+    lifecycle: {}
+      # postStartCommand: []
+      # preStopCommand: []
+
+  ##
+  ## queue job to execute monica background tasks
+  ##  Use in addition to a `QUEUE_CONNECTION` variable
+  ##
+  queue:
+    enabled: false
+
+    # Allow configuration of lifecycle hooks
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
+    lifecycle: {}
+      # postStartCommand: []
+      # preStopCommand: []
 
 nginx:
   ## You need to set an fpm version of the image for monica if you want to use nginx!
@@ -151,7 +177,6 @@ nginx:
 
   resources: {}
 
-
 ##
 ## Internal database configuration (SQLite)
 ##
@@ -159,7 +184,6 @@ internalDatabase:
   enabled: true
   ## Database fullpath file
   name: /var/www/html/database/monica.sqlite
-
 
 ##
 ## External database configuration
@@ -251,9 +275,12 @@ memcached:
   enabled: false
   auth:
     enabled: true
+    username: monica
     password: secret
     # existingSecret
     # existingSecretPasswordKey
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
 
 ##
 ## Meilisearch chart configuration
@@ -264,35 +291,17 @@ meilisearch:
   environment:
     MEILI_ENV: production
     # MEILI_MASTER_KEY
-  auth:
-    # existingMasterKeySecret
-
-## Cronjob to execute monica scheduled tasks
-cronjob:
-  enabled: false
-
-  # Allow configuration of lifecycle hooks
-  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
-  lifecycle: {}
-    # postStartCommand: []
-    # preStopCommand: []
-
-
-## queue job to execute monica background tasks
-queue:
-  enabled: false
-
-  # Allow configuration of lifecycle hooks
-  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
-  lifecycle: {}
-    # postStartCommand: []
-    # preStopCommand: []
+  # auth:
+  #   existingMasterKeySecret
 
 service:
   type: ClusterIP
   port: 8080
-  loadBalancerIP: nil
-  nodePort: nil
+  loadBalancerIP: ""
+  nodePort:
+  annotations: {}
+    ## Insert your annotations such as below
+    # test/test: pumuckel
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

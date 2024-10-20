@@ -4,8 +4,8 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  helm: v3.6.3
-  python-version: 3.7
+  helm: v3.16.2
+  python-version: 3.x
 
 jobs:
   linter:
@@ -17,11 +17,11 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.helm }}
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.python-version }}
 
@@ -29,10 +29,35 @@ jobs:
         uses: helm/chart-testing-action@v2
 
       - name: Run chart-testing (lint)
-        run: ct lint --config ct.yaml
+        run: ct lint --config ct.yaml --target-branch ${{ github.event.repository.default_branch }}
 
   helm-tests:
     runs-on: ubuntu-latest
+    name: Helm tests (${{ matrix.test_cases.name }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        test_cases:
+          # test the plain helm chart with nothing changed
+          - name: Default - no custom values
+
+          # test the helm chart with postgresql subchart enabled
+          - name: PostgreSQL enabled
+            helm_args: '--set=internalDatabase.enabled=false --set=postgresql.enabled=true'
+
+          # test the helm chart with mariadb subchart enabled
+          - name: Mariadb enabled
+            helm_args: '--set=internalDatabase.enabled=false --set=mariadb.enabled=true'
+
+          # test the helm chart with redis, queue and more
+          - name: Redis and queue enabled
+            file: redis.yaml
+
+          # test the helm chart with meilisearch
+          - name: Meilisearch and queue enabled
+            file: meilisearch.yaml          
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,11 +65,11 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.helm }}
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.python-version }}
 
@@ -54,7 +79,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --config ct.yaml)
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
@@ -63,5 +88,9 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Cp test case file
+        if: matrix.test_cases.file != ''
+        run: cp .github/tests/${{ matrix.test_cases.file }} charts/monica/ci/test-values.yaml
+
       - name: Run chart-testing (install)
-        run: ct install --config ct.yaml
+        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=image.repository=ghcr.io/monicahq/monica-next --set=image.tag=main ${{ matrix.test_cases.helm_args }}"

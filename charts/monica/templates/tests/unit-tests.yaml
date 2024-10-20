@@ -1,4 +1,5 @@
 {{- $fullName := include "monica.fullname" . -}}
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -9,15 +10,17 @@ metadata:
     "helm.sh/hook": test
 spec:
   serviceAccountName: {{ include "monica.serviceAccountName" . }}
-  {{- if .Values.imagePullSecrets }}
+  {{- with .Values.image.pullSecrets }}
   imagePullSecrets:
-  - name: {{ .Values.imagePullSecrets }}
+    {{- range . }}
+    - name: {{ . }}
+    {{- end }}
   {{- end }}
   containers:
     - name: unit-tests
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       imagePullPolicy: {{ .Values.image.pullPolicy }}
-      command: ['entrypoint-unittests.sh']
+      command: ['/bin/sh', '-c', 'sleep 20 && entrypoint-unittests.sh']
       env:
         {{- include "monica.env" . | indent 8 }}
       resources:
