@@ -1,6 +1,8 @@
 image:
-  repository: monica
-  tag: 5.0-apache
+  repository: ghcr.io/monicahq/monica-next
+  tag: main
+  # repository: monica
+  # tag: 5.0-apache
   pullPolicy: IfNotPresent
   # pullSecrets:
   #   - myRegistrKeySecretName

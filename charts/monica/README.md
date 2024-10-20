@@ -42,8 +42,8 @@ Kubernetes: `>=1.16.0-0`
 | externalDatabase.user | string | `"monica"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"monica"` |  |
-| image.tag | string | `"5.0-apache"` |  |
+| image.repository | string | `"ghcr.io/monicahq/monica-next"` |  |
+| image.tag | string | `"main"` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.labels | object | `{}` |  |
