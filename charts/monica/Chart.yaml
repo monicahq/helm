@@ -8,12 +8,14 @@ icon: https://www.monicahq.com/favicon.ico
 maintainers:
   - name: MonicaHQ
     url: https://github.com/monicahq/monica
+  - name: asbiin
+    email: alexis@saettler.org
 keywords:
   - crm
 kubeVersion: ">=1.16.0-0"
 sources:
-  - https://github.com/monicahq/monica
-  - https://hub.docker.com/_/monica
+  - https://github.com/monicahq/helm
+  - https://github.com/monicahq/docker
 dependencies:
   - name: postgresql
     version: 16.0.*

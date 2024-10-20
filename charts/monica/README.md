@@ -9,11 +9,12 @@ A Helm chart for Kubernetes to install Monica
 | Name | Email | Url |
 | ---- | ------ | --- |
 | MonicaHQ |  | <https://github.com/monicahq/monica> |
+| asbiin | <alexis@saettler.org> |  |
 
 ## Source Code
 
-* <https://github.com/monicahq/monica>
-* <https://hub.docker.com/_/monica>
+* <https://github.com/monicahq/helm>
+* <https://github.com/monicahq/docker>
 
 ## Requirements
 
