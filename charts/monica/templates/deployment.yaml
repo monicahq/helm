@@ -25,7 +25,7 @@ spec:
         {{- include "monica.selectorLabels" . | nindent 8 }}
         {{- if .Values.redis.enabled }}
         {{ template "monica.redis.fullname" . }}-client: "true"
-        {{- end }}        
+        {{- end }}
         {{- if .Values.memcached.enabled }}
         {{ template "monica.memcached.fullname" . }}-client: "true"
         {{- end }}        
@@ -41,11 +41,11 @@ spec:
         {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
-      {{- if .Values.image.pullSecrets }}
+      {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
-      {{- range .Values.image.pullSecrets }}
+        {{- range . }}
         - name: {{ . }}
-      {{- end }}
+        {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -79,12 +79,12 @@ spec:
           volumeMounts:
             {{- include "monica.volumeMounts" . | trim | nindent 12 }}
 
-        {{- if .Values.cronjob.enabled }}
+        {{- if .Values.monica.cronjob.enabled }}
         - name: {{ .Chart.Name }}-cron
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'cron.sh' ]
-          {{- with .Values.cronjob.lifecycle }}
+          {{- with .Values.monica.cronjob.lifecycle }}
           lifecycle:
             {{- with .postStartCommand }}
             postStart:
@@ -105,14 +105,14 @@ spec:
             {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
             {{- include "monica.volumeMounts" . | trim | nindent 12 }}
-        {{- end }}{{/* cronjob.enabled */}}
+        {{- end }}{{/* monica.cronjob.enabled */}}
 
-        {{- if .Values.queue.enabled }}
+        {{- if .Values.monica.queue.enabled }}
         - name: {{ .Chart.Name }}-queue
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'queue.sh' ]
-          {{- with .Values.queue.lifecycle }}
+          {{- with .Values.monica.queue.lifecycle }}
           lifecycle:
             {{- if .postStartCommand }}
             postStart:
@@ -133,7 +133,7 @@ spec:
             {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
             {{- include "monica.volumeMounts" . | trim | nindent 12 }}
-        {{- end }}{{/* queue.enabled */}}
+        {{- end }}{{/* monica.queue.enabled */}}
 
         {{- if .Values.nginx.enabled }}
         - name: {{ .Chart.Name }}-nginx

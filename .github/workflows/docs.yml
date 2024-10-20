@@ -1,0 +1,24 @@
+name: Helm docs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run helm-docs
+        uses: losisin/helm-docs-github-action@v1
+
+      - name: Check if there is any file update needed
+        run: |
+          status=$(git status --porcelain)
+          if [ -n "$status" ]; then
+            echo -e "Waiting modifications:\n$status"
+            echo "::error::Changes waiting. Please run 'helm-docs' prior to your next commit."
+            exit -1
+          fi

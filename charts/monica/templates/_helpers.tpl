@@ -242,15 +242,12 @@ Create environment variables used to configure the monica container as well as t
 {{- end }}
 {{- if .Values.meilisearch.enabled }}
 - name: MEILISEARCH_HOST
-  value: {{ template "monica.meilisearch.fullname" . }}
-{{- if .Values.meilisearch.auth.existingMasterKeySecret }}
+  value: http://{{ template "monica.meilisearch.fullname" . }}:7700
 - name: MEILISEARCH_KEY
   valueFrom:
     secretKeyRef:
       name: {{ template "monica.meilisearch.fullname" . }}-master-key
       key: MEILI_MASTER_KEY
-{{- else }}
-{{- end }}
 {{- end }}
 {{- end -}}
 

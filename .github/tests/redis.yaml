@@ -1,0 +1,28 @@
+redis:
+  enabled: true
+  architecture: standalone
+  master:
+    persistence:
+      enabled: false
+
+internalDatabase:
+  enabled: false
+
+mariadb:
+  enabled: true
+
+memcached:
+  enabled: true
+
+monica:
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: redis
+    - name: CACHE_STORE
+      value: memcached
+
+  cronjob:
+    enabled: true
+
+  queue:
+    enabled: true
