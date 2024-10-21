@@ -68,7 +68,7 @@ monica:
     # mailUsernameKey: smtp_username
     # mailPasswordKey: smtp_password
   # If web server is not binding default port, you can define it
-  # containerPort: 8080
+  # containerPort: 80
   storagedir: /var/www/html/storage
   mail:
     enabled: false
@@ -169,6 +169,7 @@ nginx:
     tag: alpine
     pullPolicy: IfNotPresent
 
+  containerPort: 80
   config:
     # This generates the default nginx config
     default: true
@@ -363,3 +364,4 @@ tests:
       limits:
         cpu: 200m
         memory: 256Mi
+

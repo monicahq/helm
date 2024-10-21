@@ -19,10 +19,12 @@ spec:
   selector:
     matchLabels:
       {{- include "monica.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: app
   template:
     metadata:
       labels:
         {{- include "monica.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: app
         {{- if .Values.redis.enabled }}
         {{ template "monica.redis.fullname" . }}-client: "true"
         {{- end }}
@@ -72,7 +74,7 @@ spec:
           ports:
             - name: http
               protocol: TCP
-              containerPort: {{ .Values.monica.containerPort | default "80" }}
+              containerPort: {{ .Values.monica.containerPort | default 80 }}
           {{- end }}
           resources:
             {{ toYaml .Values.resources | indent 12 }}
@@ -137,18 +139,22 @@ spec:
 
         {{- if .Values.nginx.enabled }}
         - name: {{ .Chart.Name }}-nginx
-          image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+          {{- with .Values.nginx.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.monica.containerPort | default "http" }}
+              containerPort: {{ .Values.nginx.containerPort | default 80 }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           {{- if .enabled }}
           livenessProbe:
             httpGet:
               path: /status.php
-              port: {{ $.Values.nextcloud.containerPort | default "http" }}
+              port: {{ $.Values.monica.containerPort | default 80 }}
               httpHeaders:
                 - name: Host
                   value: {{ $.Values.monica.host | quote }}
@@ -164,7 +170,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /status.php
-              port: {{ $.Values.nextcloud.containerPort | default "http" }}
+              port: {{ $.Values.monica.containerPort | default 80 }}
               httpHeaders:
                 - name: Host
                   value: {{ $.Values.monica.host | quote }}
@@ -183,8 +189,7 @@ spec:
               mountPath: {{ .Values.monica.datadir }}
             {{- end }}
             - name: monica-nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
+              mountPath: /etc/nginx/conf.d/
             {{- with .Values.monica.extraVolumeMounts }}
             {{ toYaml . | indent 12 }}
             {{- end }}

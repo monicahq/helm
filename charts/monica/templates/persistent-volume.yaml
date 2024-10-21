@@ -7,8 +7,10 @@ metadata:
   name: {{ template "monica.fullname" . }}-storage
   labels:
     {{- include "monica.labels" . | nindent 4 }}
-  {{- with .Values.persistence.annotations }}
+    app.kubernetes.io/component: app
   annotations:
+    helm.sh/resource-policy: keep
+  {{- with .Values.persistence.annotations }}
     {{ toYaml . | indent 4 }}
   {{- end }}
 spec:

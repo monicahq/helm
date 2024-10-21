@@ -9,7 +9,11 @@ metadata:
   {{- end }}
   labels:
     {{- include "monica.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app
 spec:
+  selector:
+    {{- include "monica.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: app
   type: {{ .Values.service.type }}
   {{- if (eq .Values.service.type "LoadBalancer") }}
   {{- with .Values.service.loadBalancerIP }}
@@ -25,11 +29,9 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.monica.containerPort | default 80 }}
       protocol: TCP
       name: http
       {{- with .Values.service.nodePort }}
       nodePort: {{ . }}
       {{- end }}
-  selector:
-    {{- include "monica.selectorLabels" . | nindent 4 }}
