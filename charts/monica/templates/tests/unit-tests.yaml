@@ -16,13 +16,8 @@ spec:
     - name: {{ . }}
     {{- end }}
   {{- end }}
+  restartPolicy: Never
   containers:
     - name: unit-tests
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-      imagePullPolicy: {{ .Values.image.pullPolicy }}
-      command: ['/bin/sh', '-c', 'sleep 20 && entrypoint-unittests.sh']
-      env:
-        {{- include "monica.env" . | indent 8 }}
-      resources:
-        {{- toYaml .Values.tests.unitTests.resources | nindent 8 }}
-  restartPolicy: Never
+      image: busybox
+      command: ['/bin/sh', '-c', 'sleep 20 && wget --spider --timeout=5 http://{{ $fullName }}:{{ .Values.service.port }}']

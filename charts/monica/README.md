@@ -92,6 +92,7 @@ Kubernetes: `>=1.16.0-0`
 | monica.strategy.type | string | `"Recreate"` |  |
 | nameOverride | string | `""` |  |
 | nginx.config.default | bool | `true` |  |
+| nginx.containerPort | int | `80` |  |
 | nginx.enabled | bool | `false` |  |
 | nginx.image.pullPolicy | string | `"IfNotPresent"` |  |
 | nginx.image.repository | string | `"nginx"` |  |

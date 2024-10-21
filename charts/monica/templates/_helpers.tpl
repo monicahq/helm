@@ -35,12 +35,12 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "monica.labels" -}}
-helm.sh/chart: {{ include "monica.chart" . }}
 {{ include "monica.selectorLabels" . }}
+helm.sh/chart: {{ include "monica.chart" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if or .Chart.AppVersion .Values.image.tag }}
 app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
@@ -49,7 +49,6 @@ Selector labels
 {{- define "monica.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "monica.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/component: app
 {{- end -}}
 
 {{/*
