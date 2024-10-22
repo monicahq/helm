@@ -51,7 +51,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.lifecycle }}
           lifecycle:
@@ -83,7 +83,7 @@ spec:
 
         {{- if .Values.monica.cronjob.enabled }}
         - name: {{ .Chart.Name }}-cron
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'cron.sh' ]
           {{- with .Values.monica.cronjob.lifecycle }}
@@ -111,7 +111,7 @@ spec:
 
         {{- if .Values.monica.queue.enabled }}
         - name: {{ .Chart.Name }}-queue
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ 'queue.sh' ]
           {{- with .Values.monica.queue.lifecycle }}

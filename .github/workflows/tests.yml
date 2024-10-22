@@ -51,13 +51,12 @@ jobs:
             helm_args: '--set=internalDatabase.enabled=false --set=mariadb.enabled=true'
 
           # test the helm chart with nodeport service enabled
-          - name: nginx
+          - name: Nodeport service enabled
             helm_args: '--set=service.type=NodePort --set=service.nodePort=30001'
 
           # test the helm chart with nginx subchart enabled
-          - name: nginx
-            helm_args: '--set=nginx.enabled=true'
-            tag: main-fpm
+          - name: nginx enabled
+            helm_args: '--set=nginx.enabled=true --set=image.tag=main-fpm'
 
           # test the helm chart with redis, queue and more
           - name: Redis and queue enabled
@@ -69,7 +68,7 @@ jobs:
 
           - name: External database
             external_database: true
-            helm_args: '--set=internalDatabase.enabled=false --set=externalDatabase.enabled=true --set=externalDatabase.type=mysql --set=externalDatabase.host=127.0.0.1 --set=externalDatabase.user=root --set=externalDatabase.password=root --set=externalDatabase.database=monica'
+            helm_args: '--set=internalDatabase.enabled=false --set=externalDatabase.enabled=true --set=externalDatabase.type=mysql --set=externalDatabase.host=$DB_HOST --set=externalDatabase.user=root --set=externalDatabase.password=root --set=externalDatabase.database=monica'
 
     steps:
       - name: Checkout
@@ -106,10 +105,14 @@ jobs:
         run: |
           sudo systemctl start mysql.service
           mysql --protocol=tcp -u root -proot -e "CREATE DATABASE IF NOT EXISTS monica CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          IFS=' '
+          read -ra hostname <<< $(hostname -I)
+          echo "DB_HOST=${hostname[-1]}" >> $GITHUB_OUTPUT
 
       - name: Cp test case file
         if: matrix.test_cases.file != ''
         run: cp .github/tests/${{ matrix.test_cases.file }} charts/monica/ci/test-values.yaml
 
       - name: Run chart-testing (install)
-        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "--set=image.repository=ghcr.io/monicahq/monica-next --set=image.tag=${{ matrix.test_cases.tag || 'main' }} ${{ matrix.test_cases.helm_args }}"
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }}"
