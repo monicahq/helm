@@ -3,6 +3,49 @@ entries:
   monica:
   - apiVersion: v2
     appVersion: 5.0.0
+    created: "2024-10-22T20:55:39.203124008Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 16.0.*
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.*
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.2.*
+    - condition: memcached.enabled
+      name: memcached
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 7.5.*
+    - condition: meilisearch.enabled
+      name: meilisearch
+      repository: https://meilisearch.github.io/meilisearch-kubernetes
+      version: 0.10.*
+    description: A Helm chart for Kubernetes to install Monica
+    digest: 543d424604ea654c5815410a1b578285023d21bc38bc3192a3acebc363e63cf0
+    icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
+    keywords:
+    - crm
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: MonicaHQ
+      url: https://github.com/monicahq/monica
+    - email: alexis@saettler.org
+      name: asbiin
+    name: monica
+    sources:
+    - https://github.com/monicahq/helm
+    - https://github.com/monicahq/docker
+    type: application
+    urls:
+    - https://github.com/monicahq/helm/releases/download/monica-1.0.8/monica-1.0.8.tgz
+    version: 1.0.8
+  - apiVersion: v2
+    appVersion: 5.0.0
     created: "2024-10-20T19:25:31.911574872Z"
     dependencies:
     - condition: postgresql.enabled
@@ -272,4 +315,4 @@ entries:
     urls:
     - https://github.com/monicahq/helm/releases/download/monica-1.0.1/monica-1.0.1.tgz
     version: 1.0.1
-generated: "2024-10-20T19:25:31.911595821Z"
+generated: "2024-10-22T20:55:39.203161798Z"
