@@ -39,30 +39,23 @@ jobs:
       fail-fast: false
       matrix:
         test_cases:
-          # test the plain helm chart with nothing changed
           - name: Default - no custom values
 
-          # test the helm chart with postgresql subchart enabled
           - name: PostgreSQL enabled
             helm_args: '--set=internalDatabase.enabled=false --set=postgresql.enabled=true'
 
-          # test the helm chart with mariadb subchart enabled
           - name: Mariadb enabled
             helm_args: '--set=internalDatabase.enabled=false --set=mariadb.enabled=true'
 
-          # test the helm chart with nodeport service enabled
           - name: Nodeport service enabled
             helm_args: '--set=service.type=NodePort --set=service.nodePort=30001'
 
-          # test the helm chart with nginx subchart enabled
           - name: nginx enabled
             helm_args: '--set=nginx.enabled=true --set=image.tag=main-fpm'
 
-          # test the helm chart with redis, queue and more
           - name: Redis and queue enabled
             file: redis.yaml
 
-          # test the helm chart with meilisearch
           - name: Meilisearch and queue enabled
             file: meilisearch.yaml          
 
@@ -112,9 +105,9 @@ jobs:
           hostname -I
           IFS=' '
           read -ra hostname <<< $(hostname -I)
-          DB_HOST=${hostname[0]}
+          DB_HOST=${hostname[1]}
           sed -i "s/%DB_HOST%/$DB_HOST/" charts/monica/ci/test-values.yaml
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }} $EXTRAARGS"
+        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }}"
