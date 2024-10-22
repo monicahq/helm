@@ -68,7 +68,7 @@ jobs:
 
           - name: External database
             external_database: true
-            helm_args: '--set=internalDatabase.enabled=false --set=externalDatabase.enabled=true --set=externalDatabase.type=mysql --set=externalDatabase.user=root --set=externalDatabase.password=root --set=externalDatabase.database=monica'
+            file: external_database.yaml          
 
     steps:
       - name: Checkout
@@ -100,6 +100,10 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Cp test case file
+        if: matrix.test_cases.file != ''
+        run: cp .github/tests/${{ matrix.test_cases.file }} charts/monica/ci/test-values.yaml
+
       - name: Create mysql database
         if: matrix.test_cases.external_database
         run: |
@@ -107,11 +111,8 @@ jobs:
           mysql --protocol=tcp -u root -proot -e "CREATE DATABASE IF NOT EXISTS monica CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
           IFS=' '
           read -ra hostname <<< $(hostname -I)
-          echo "EXTRAARGS='--set=externalDatabase.host=DB_HOST=${hostname[-1]}'" >> $GITHUB_ENV
-
-      - name: Cp test case file
-        if: matrix.test_cases.file != ''
-        run: cp .github/tests/${{ matrix.test_cases.file }} charts/monica/ci/test-values.yaml
+          DB_HOST=${hostname[-1]}
+          sed -i "s/%DB_HOST%/$DB_HOST/" charts/monica/ci/test-values.yaml
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
