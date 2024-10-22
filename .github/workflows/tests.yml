@@ -57,11 +57,14 @@ jobs:
             file: redis.yaml
 
           - name: Meilisearch and queue enabled
-            file: meilisearch.yaml          
+            file: meilisearch.yaml
 
-          - name: External database
-            external_database: true
-            file: external_database.yaml          
+          - name: Horizontal Pod Autoscaling Enabled
+            helm_args: '--set=hpa.enabled=true --set=hpa.minPods=2 --set=hpa.maxPods=3 --set=hpa.targetCPUUtilizationPercentage=75'
+
+          # - name: External database
+          #   external_database: true
+          #   file: external_database.yaml          
 
     steps:
       - name: Checkout
