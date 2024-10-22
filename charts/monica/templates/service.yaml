@@ -29,7 +29,11 @@ spec:
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
+      {{- if .Values.nginx.enabled }}
+      targetPort: {{ .Values.nginx.containerPort | default 80 }}
+      {{- else }}
       targetPort: {{ .Values.monica.containerPort | default 80 }}
+      {{- end }}
       protocol: TCP
       name: http
       {{- with .Values.service.nodePort }}

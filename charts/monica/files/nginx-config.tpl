@@ -4,6 +4,7 @@ upstream php-handler {
 
 server {
     listen {{ .Values.nginx.containerPort | default 80 }};
+    listen [::]:{{ .Values.nginx.containerPort | default 80 }};
 
     ## HSTS ##
     # Add the 'Strict-Transport-Security' headers to enable HSTS protocol.
@@ -26,7 +27,7 @@ server {
 
     root /var/www/html/public;
 
-    index index.html index.htm index.php;
+    index index.php index.html index.htm;
 
     charset utf-8;
 
