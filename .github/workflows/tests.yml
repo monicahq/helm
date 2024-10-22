@@ -112,7 +112,7 @@ jobs:
           hostname -I
           IFS=' '
           read -ra hostname <<< $(hostname -I)
-          DB_HOST=${hostname[-1]}
+          DB_HOST=${hostname[0]}
           sed -i "s/%DB_HOST%/$DB_HOST/" charts/monica/ci/test-values.yaml
 
       - name: Run chart-testing (install)

@@ -123,11 +123,11 @@ monica:
   #  - name: nfs
   #    nfs:
   #      server: "10.0.0.1"
-  #      path: "/monica_data"
+  #      path: "/var/www/html/storage"
   #      readOnly: false
   extraVolumeMounts:
   #  - name: nfs
-  #    mountPath: "/monica_data"
+  #    mountPath: "/var/www/html/storage"
 
   # Extra secuurityContext parameters. For example you may need to define runAsNonRoot directive
   # extraSecurityContext:
