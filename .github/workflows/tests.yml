@@ -68,7 +68,7 @@ jobs:
 
           - name: External database
             external_database: true
-            helm_args: '--set=internalDatabase.enabled=false --set=externalDatabase.enabled=true --set=externalDatabase.type=mysql --set=externalDatabase.host=$DB_HOST --set=externalDatabase.user=root --set=externalDatabase.password=root --set=externalDatabase.database=monica'
+            helm_args: '--set=internalDatabase.enabled=false --set=externalDatabase.enabled=true --set=externalDatabase.type=mysql --set=externalDatabase.user=root --set=externalDatabase.password=root --set=externalDatabase.database=monica'
 
     steps:
       - name: Checkout
@@ -107,7 +107,7 @@ jobs:
           mysql --protocol=tcp -u root -proot -e "CREATE DATABASE IF NOT EXISTS monica CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
           IFS=' '
           read -ra hostname <<< $(hostname -I)
-          echo "DB_HOST=${hostname[-1]}" >> $GITHUB_OUTPUT
+          echo "EXTRAARGS='--set=externalDatabase.host=DB_HOST=${hostname[-1]}'" >> $GITHUB_ENV
 
       - name: Cp test case file
         if: matrix.test_cases.file != ''
@@ -115,4 +115,4 @@ jobs:
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }}"
+        run: ct install --config ct.yaml --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }} $EXTRAARGS"
