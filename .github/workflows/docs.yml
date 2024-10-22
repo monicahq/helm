@@ -5,8 +5,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  release:
+  docs:
     runs-on: ubuntu-latest
+    name: Helm docs
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.7](https://img.shields.io/badge/Version-1.0.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.8](https://img.shields.io/badge/Version-1.0.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -42,6 +42,10 @@ Kubernetes: `>=1.16.0-0`
 | externalDatabase.type | string | `"mysql"` |  |
 | externalDatabase.user | string | `"monica"` |  |
 | fullnameOverride | string | `""` |  |
+| hpa.cputhreshold | int | `60` |  |
+| hpa.enabled | bool | `false` |  |
+| hpa.maxPods | int | `10` |  |
+| hpa.minPods | int | `1` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"ghcr.io/monicahq/monica-next"` |  |
 | image.tag | string | `"main"` |  |
@@ -53,6 +57,12 @@ Kubernetes: `>=1.16.0-0`
 | internalDatabase.enabled | bool | `true` |  |
 | internalDatabase.name | string | `"/var/www/html/database/monica.sqlite"` |  |
 | lifecycle | object | `{}` |  |
+| livenessProbe.enabled | bool | `true` |  |
+| livenessProbe.failureThreshold | int | `3` |  |
+| livenessProbe.initialDelaySeconds | int | `10` |  |
+| livenessProbe.periodSeconds | int | `10` |  |
+| livenessProbe.successThreshold | int | `1` |  |
+| livenessProbe.timeoutSeconds | int | `5` |  |
 | mariadb.architecture | string | `"standalone"` |  |
 | mariadb.auth.database | string | `"monica"` |  |
 | mariadb.auth.password | string | `"secret"` |  |
@@ -92,6 +102,7 @@ Kubernetes: `>=1.16.0-0`
 | monica.strategy.type | string | `"Recreate"` |  |
 | nameOverride | string | `""` |  |
 | nginx.config.default | bool | `true` |  |
+| nginx.containerPort | int | `80` |  |
 | nginx.enabled | bool | `false` |  |
 | nginx.image.pullPolicy | string | `"IfNotPresent"` |  |
 | nginx.image.repository | string | `"nginx"` |  |
@@ -109,6 +120,12 @@ Kubernetes: `>=1.16.0-0`
 | postgresql.global.postgresql.auth.password | string | `"secret"` |  |
 | postgresql.global.postgresql.auth.username | string | `"monica"` |  |
 | postgresql.primary.persistence.enabled | bool | `false` |  |
+| readinessProbe.enabled | bool | `true` |  |
+| readinessProbe.failureThreshold | int | `3` |  |
+| readinessProbe.initialDelaySeconds | int | `10` |  |
+| readinessProbe.periodSeconds | int | `10` |  |
+| readinessProbe.successThreshold | int | `1` |  |
+| readinessProbe.timeoutSeconds | int | `5` |  |
 | redis.auth.enabled | bool | `true` |  |
 | redis.auth.password | string | `"secret"` |  |
 | redis.enabled | bool | `false` |  |
@@ -122,6 +139,12 @@ Kubernetes: `>=1.16.0-0`
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.create | bool | `true` |  |
 | serviceAccount.name | string | `""` |  |
+| startupProbe.enabled | bool | `false` |  |
+| startupProbe.failureThreshold | int | `30` |  |
+| startupProbe.initialDelaySeconds | int | `30` |  |
+| startupProbe.periodSeconds | int | `10` |  |
+| startupProbe.successThreshold | int | `1` |  |
+| startupProbe.timeoutSeconds | int | `5` |  |
 | tests.unitTests.resources.limits.cpu | string | `"200m"` |  |
 | tests.unitTests.resources.limits.memory | string | `"256Mi"` |  |
 | tests.unitTests.resources.requests.cpu | string | `"100m"` |  |

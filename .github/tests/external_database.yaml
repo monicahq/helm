@@ -1,0 +1,10 @@
+internalDatabase:
+   enabled: false
+
+externalDatabase:
+  enabled: true
+  type: mysql
+  user: root
+  password: root
+  database: monica
+  host: %DB_HOST%

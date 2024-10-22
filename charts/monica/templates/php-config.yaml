@@ -7,8 +7,8 @@ metadata:
   labels:
     {{- include "monica.labels" . | nindent 4 }}
 data:
-{{- range $key, $value := .Values.monica.phpConfigs }}
+  {{- range $key, $value := .Values.monica.phpConfigs }}
   {{ $key }}: |-
-{{ $value | indent 4 }}
-{{- end }}
+    {{- $value | indent 4 }}
+  {{- end }}
 {{- end }}

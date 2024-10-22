@@ -68,7 +68,7 @@ monica:
     # mailUsernameKey: smtp_username
     # mailPasswordKey: smtp_password
   # If web server is not binding default port, you can define it
-  # containerPort: 8080
+  # containerPort: 80
   storagedir: /var/www/html/storage
   mail:
     enabled: false
@@ -123,11 +123,11 @@ monica:
   #  - name: nfs
   #    nfs:
   #      server: "10.0.0.1"
-  #      path: "/monica_data"
+  #      path: "/var/www/html/storage"
   #      readOnly: false
   extraVolumeMounts:
   #  - name: nfs
-  #    mountPath: "/monica_data"
+  #    mountPath: "/var/www/html/storage"
 
   # Extra secuurityContext parameters. For example you may need to define runAsNonRoot directive
   # extraSecurityContext:
@@ -169,6 +169,7 @@ nginx:
     tag: alpine
     pullPolicy: IfNotPresent
 
+  containerPort: 80
   config:
     # This generates the default nginx config
     default: true
@@ -338,6 +339,42 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+
+## Liveness and readiness probe values
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+  successThreshold: 1
+
+
+## Enable pod autoscaling using HorizontalPodAutoscaler
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+hpa:
+  enabled: false
+  cputhreshold: 60
+  minPods: 1
+  maxPods: 10
 
 nodeSelector: {}
 
