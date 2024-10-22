@@ -30,6 +30,10 @@ server {
 
     charset utf-8;
 
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
     location ~ ^/(?:robots.txt|security.txt) {
         allow all;
         log_not_found off;
@@ -64,12 +68,12 @@ server {
     # This module is currently not supported.
     #pagespeed off;
 
-    location ~ \.php(/|$) {
+    location ~ \.php(?:$|/) {
         # regex to split $uri to $fastcgi_script_name and $fastcgi_path
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 
         # Check that the PHP script exists before passing it
-        try_files $fastcgi_script_name =404;
+        # try_files $fastcgi_script_name =404;
 
         fastcgi_pass php-handler;
         fastcgi_index index.php;
@@ -120,9 +124,5 @@ server {
     # deny access to .htaccess files
     location ~ /\.ht {
         deny all;
-    }
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
     }
 }
