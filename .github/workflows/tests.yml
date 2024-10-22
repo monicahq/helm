@@ -9,6 +9,7 @@ env:
 
 jobs:
   linter:
+    name: Lint chart files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,18 +54,18 @@ jobs:
           - name: nginx enabled
             helm_args: '--set=nginx.enabled=true --set=image.tag=main-fpm'
 
+          - name: Horizontal Pod Autoscaling Enabled
+            helm_args: '--set=hpa.enabled=true --set=hpa.minPods=2 --set=hpa.maxPods=3 --set=hpa.targetCPUUtilizationPercentage=75'
+
           - name: Redis and queue enabled
             file: redis.yaml
 
           - name: Meilisearch and queue enabled
             file: meilisearch.yaml
 
-          - name: Horizontal Pod Autoscaling Enabled
-            helm_args: '--set=hpa.enabled=true --set=hpa.minPods=2 --set=hpa.maxPods=3 --set=hpa.targetCPUUtilizationPercentage=75'
-
           # - name: External database
           #   external_database: true
-          #   file: external_database.yaml          
+          #   file: external_database.yaml
 
     steps:
       - name: Checkout
