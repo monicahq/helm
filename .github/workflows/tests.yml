@@ -109,6 +109,7 @@ jobs:
         run: |
           sudo systemctl start mysql.service
           mysql --protocol=tcp -u root -proot -e "CREATE DATABASE IF NOT EXISTS monica CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          hostname -I
           IFS=' '
           read -ra hostname <<< $(hostname -I)
           DB_HOST=${hostname[-1]}
