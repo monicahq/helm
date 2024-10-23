@@ -1,6 +1,53 @@
 apiVersion: v1
 entries:
   monica:
+  - annotations:
+      artifacthub.io/signKey: |
+        fingerprint: AFE991E31648AE825AD37DDF932D00A7AEEA553D
+        url: https://monicahq.github.io/helm/public-key.asc
+    apiVersion: v2
+    appVersion: 5.0.0
+    created: "2024-10-23T13:39:28.645689558Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 16.0.*
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.*
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.2.*
+    - condition: memcached.enabled
+      name: memcached
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 7.5.*
+    - condition: meilisearch.enabled
+      name: meilisearch
+      repository: https://meilisearch.github.io/meilisearch-kubernetes
+      version: 0.10.*
+    description: A Helm chart for Kubernetes to install Monica
+    digest: b1e30ca6cffa2fff9aa15496c54864bebedcad77a7137d8de587151bd1ef0783
+    icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
+    keywords:
+    - crm
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: MonicaHQ
+      url: https://github.com/monicahq/monica
+    - email: alexis@saettler.org
+      name: asbiin
+    name: monica
+    sources:
+    - https://github.com/monicahq/helm
+    - https://github.com/monicahq/docker
+    type: application
+    urls:
+    - https://github.com/monicahq/helm/releases/download/monica-1.0.9/monica-1.0.9.tgz
+    version: 1.0.9
   - apiVersion: v2
     appVersion: 5.0.0
     created: "2024-10-22T20:55:39.203124008Z"
@@ -315,4 +362,4 @@ entries:
     urls:
     - https://github.com/monicahq/helm/releases/download/monica-1.0.1/monica-1.0.1.tgz
     version: 1.0.1
-generated: "2024-10-22T20:55:39.203161798Z"
+generated: "2024-10-23T13:39:28.64572219Z"
