@@ -36,7 +36,7 @@ jobs:
         run: |
           echo -e "$GPG_PRIVATE_KEY" | gpg --batch --yes --import -
           gpg --list-secret-keys
-          gpg --export >~/.gnupg/pubring.gpg
+          gpg --export > ~/.gnupg/pubring.gpg
           gpg --export-secret-keys > ~/.gnupg/secring.gpg
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -55,6 +55,5 @@ jobs:
         uses: helm/chart-releaser-action@v1
         env:
           CR_KEY: ${{ secrets.CR_KEY }}
-          CR_KEYRING: ~/.gnupg/secring.gpg
           CR_SIGN: true
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
