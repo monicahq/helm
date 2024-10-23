@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.9
+version: 1.0.10
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
