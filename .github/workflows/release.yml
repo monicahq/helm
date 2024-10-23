@@ -34,7 +34,12 @@ jobs:
 
       - name: Import GPG key
         run: |
-          echo -e "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --dearmor --output keyring.gpg
+          echo -e "$GPG_PRIVATE_KEY" | gpg --batch --yes --import -
+          gpg --list-secret-keys
+          gpg --export > ~/.gnupg/pubring.gpg
+          gpg --export-secret-keys > ~/.gnupg/secring.gpg
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
@@ -50,6 +55,5 @@ jobs:
         uses: helm/chart-releaser-action@v1
         env:
           CR_KEY: ${{ secrets.CR_KEY }}
-          CR_KEYRING: keyring.gpg
           CR_SIGN: true
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

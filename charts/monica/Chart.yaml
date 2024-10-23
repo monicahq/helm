@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.9
+version: 1.0.10
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
@@ -41,3 +41,9 @@ annotations:
   artifacthub.io/signKey: |
     fingerprint: AFE991E31648AE825AD37DDF932D00A7AEEA553D
     url: https://monicahq.github.io/helm/public-key.asc
+  artifacthub.io/maintainers: |
+    - name: asbiin
+      email: alexis@saettler.org
+  artifacthub.io/screenshots: |
+    - title: Document your life
+      url: https://user-images.githubusercontent.com/61099/242266547-63d98bd9-35f3-4dfe-92f4-a4a8dd75aa5c.png
