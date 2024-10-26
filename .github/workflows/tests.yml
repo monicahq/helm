@@ -6,6 +6,7 @@ on:
 env:
   helm: v3.16.2
   python-version: 3.x
+  kubectl: v1.16.0
 
 jobs:
   linter:
@@ -96,8 +97,10 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
+        with:
+          version: ${{ env.kubectl }}
 
-      - name: Cp test case file
+      - name: Copy test case file
         if: matrix.test_cases.file != ''
         run: cp .github/tests/${{ matrix.test_cases.file }} charts/monica/ci/test-values.yaml
 
