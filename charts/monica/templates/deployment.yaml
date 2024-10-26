@@ -200,6 +200,7 @@ spec:
               readOnly: true
             - name: monica-publicdir
               mountPath: /var/www/html/public
+              subPath: public
               readOnly: true
             {{- if .Values.persistence.enabled }}
             - name: monica-storage
