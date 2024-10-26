@@ -5,9 +5,9 @@ kind: Pod
 metadata:
   name: {{ $fullName }}-unit-tests
   labels:
-    purpose: "helm-test"
+    purpose: helm-test
   annotations:
-    "helm.sh/hook": test-success
+    helm.sh/hook: test-success
 spec:
   serviceAccountName: {{ include "monica.serviceAccountName" . }}
   {{- with .Values.image.pullSecrets }}
