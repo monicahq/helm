@@ -98,7 +98,7 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
         with:
-          version: ${{ env.kubectl }}
+          kubectl_version: ${{ env.kubectl }}
 
       - name: Copy test case file
         if: matrix.test_cases.file != ''
