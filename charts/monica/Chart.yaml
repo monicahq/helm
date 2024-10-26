@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.10
+version: 1.0.11
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
@@ -12,10 +12,9 @@ maintainers:
     email: alexis@saettler.org
 keywords:
   - crm
-kubeVersion: ">=1.16.0-0"
+kubeVersion: ">=1.31.0-0"
 sources:
   - https://github.com/monicahq/helm
-  - https://github.com/monicahq/docker
 dependencies:
   - name: postgresql
     version: 16.0.*
@@ -47,3 +46,17 @@ annotations:
   artifacthub.io/screenshots: |
     - title: Document your life
       url: https://user-images.githubusercontent.com/61099/242266547-63d98bd9-35f3-4dfe-92f4-a4a8dd75aa5c.png
+  artifacthub.io/images: |
+    - name: monica-next
+      image: ghcr.io/monicahq/monica-next:main
+      platforms:
+        - linux/amd64
+  artifacthub.io/license: AGPL-3.0
+  artifacthub.io/links: |
+    - name: Helm Charts Source
+      url: https://github.com/monicahq/helm
+    - name: Website
+      url: https://www.monicahq.com/
+    - name: Source Code
+      url: https://github.com/monicahq/monica
+

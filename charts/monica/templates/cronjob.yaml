@@ -1,0 +1,48 @@
+{{- if .Values.monica.cronjob.enabled }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "monica.fullname" . }}-cron
+  labels:
+    {{- include "monica.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      template:
+        spec:
+          containers:
+            - name: {{ .Chart.Name }}-cronjob
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: 
+                - /bin/sh
+                - -c
+                - php /var/www/html/artisan schedule:run -v
+              env:
+                {{- include "monica.env" . | indent 16 }}
+              resources:
+                {{ toYaml .Values.resources | indent 16 }}
+              volumeMounts:
+                {{- include "monica.volumeMounts" . | trim | nindent 16 }}
+          restartPolicy: Never
+          volumes:
+            {{- if .Values.persistence.enabled }}
+            - name: monica-storage
+              persistentVolumeClaim:
+                claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
+            {{- end }}
+            {{- with .Values.monica.extraVolumes }}
+            {{ toYaml . | indent 12 }}
+            {{- end }}
+
+{{- end }}

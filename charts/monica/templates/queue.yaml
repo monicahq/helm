@@ -1,0 +1,77 @@
+{{- if .Values.monica.queue.enabled }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "monica.fullname" . }}-queue
+  labels:
+    {{- include "monica.labels" . | nindent 4 }}
+    app.kubernetes.io/component: queue
+spec:
+  selector:
+    matchLabels:
+      {{- include "monica.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: queue
+  template:
+    metadata:
+      labels:
+        {{- include "monica.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: queue
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-queue
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [ 'queue.sh' ]
+          {{- with .Values.monica.queue.lifecycle }}
+          lifecycle:
+            {{- if .postStartCommand }}
+            postStart:
+              exec:
+              command:
+                {{- toYaml . | nindent 18 }}
+            {{- end }}
+            {{- if .preStopCommand }}
+            preStop:
+              exec:
+              command:
+                {{- toYaml . | nindent 18 }}
+            {{- end }}
+          {{- end }}
+          env:
+            {{- include "monica.env" . | indent 12 }}
+          resources:
+            {{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            {{- include "monica.volumeMounts" . | trim | nindent 12 }}
+      {{- with .Values.monica.queue.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with .Values.monica.queue.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ . }}
+      {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: monica-storage
+          persistentVolumeClaim:
+            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
+        {{- end }}
+        {{- with .Values.monica.extraVolumes }}
+        {{ toYaml . | indent 8 }}
+        {{- end }}
+{{- with .Values.monica.queue.priorityClassName }}
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ . }}
+value: 1000000
+globalDefault: false
+{{- end }}
+{{- end }}

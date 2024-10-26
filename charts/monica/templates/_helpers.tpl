@@ -141,7 +141,7 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_DATABASE
   {{- if .Values.postgresql.auth.database }}
   value: {{ .Values.postgresql.auth.database | quote }}
-  {{ else }}
+  {{- else }}
   value: {{ .Values.postgresql.global.postgresql.auth.database | quote }}
   {{- end }}
 - name: DB_USERNAME

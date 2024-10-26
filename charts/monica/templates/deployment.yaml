@@ -132,62 +132,6 @@ spec:
           volumeMounts:
             {{- include "monica.volumeMounts" . | trim | nindent 12 }}
 
-        {{- if .Values.monica.cronjob.enabled }}
-        - name: {{ .Chart.Name }}-cron
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: [ 'cron.sh' ]
-          {{- with .Values.monica.cronjob.lifecycle }}
-          lifecycle:
-            {{- with .postStartCommand }}
-            postStart:
-              exec:
-                command:
-                  {{- toYaml . | nindent 18 }}
-            {{- end }}
-            {{- if .preStopCommand }}
-            preStop:
-              exec:
-                command:
-                  {{- toYaml . | nindent 18 }}
-            {{- end }}
-          {{- end }}
-          env:
-            {{- include "monica.env" . | indent 12 }}
-          resources:
-            {{ toYaml .Values.resources | indent 12 }}
-          volumeMounts:
-            {{- include "monica.volumeMounts" . | trim | nindent 12 }}
-        {{- end }}{{/* monica.cronjob.enabled */}}
-
-        {{- if .Values.monica.queue.enabled }}
-        - name: {{ .Chart.Name }}-queue
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: [ 'queue.sh' ]
-          {{- with .Values.monica.queue.lifecycle }}
-          lifecycle:
-            {{- if .postStartCommand }}
-            postStart:
-              exec:
-                command:
-                  {{- toYaml . | nindent 18 }}
-            {{- end }}
-            {{- if .preStopCommand }}
-            preStop:
-              exec:
-                command:
-                  {{- toYaml . | nindent 18 }}
-            {{- end }}
-          {{- end }}
-          env:
-            {{- include "monica.env" . | indent 12 }}
-          resources:
-            {{ toYaml .Values.resources | indent 12 }}
-          volumeMounts:
-            {{- include "monica.volumeMounts" . | trim | nindent 12 }}
-        {{- end }}{{/* monica.queue.enabled */}}
-
         {{- if .Values.nginx.enabled }}
         - name: {{ .Chart.Name }}-nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
@@ -251,12 +195,16 @@ spec:
           resources:
             {{ toYaml .Values.nginx.resources | indent 12 }}
           volumeMounts:
-            {{- if .Values.persistence.enabled }}
-            - name: monica-storage
-              mountPath: {{ .Values.monica.datadir }}
-            {{- end }}
             - name: monica-nginx-config
               mountPath: /etc/nginx/conf.d/
+              readOnly: true
+            - name: monica-publicdir
+              mountPath: /var/www/html/public
+              readOnly: true
+            {{- if .Values.persistence.enabled }}
+            - name: monica-storage
+              mountPath: {{ .Values.monica.storagedir }}
+            {{- end }}
             {{- with .Values.monica.extraVolumeMounts }}
             {{ toYaml . | indent 12 }}
             {{- end }}
@@ -295,7 +243,7 @@ spec:
             - {{ printf "until mariadb --host=%s-mariadb --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --execute=\"SELECT 1;\"; do echo waiting for mysql; sleep 2; done;" .Release.Name }}
         {{- else if .Values.postgresql.enabled }}
         - name: postgresql-isready
-          image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+          image: {{ .Values.postgresql.image.registry | default "docker.io"  }}/{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -327,11 +275,6 @@ spec:
           persistentVolumeClaim:
             claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
         {{- end }}
-        {{- if .Values.monica.configs }}
-        - name: monica-config
-          configMap:
-            name: {{ template "monica.fullname" . }}-config
-        {{- end }}
         {{- if .Values.monica.phpConfigs }}
         - name: monica-phpconfig
           configMap:
@@ -341,6 +284,9 @@ spec:
         - name: monica-nginx-config
           configMap:
             name: {{ template "monica.fullname" . }}-nginxconfig
+        - name: monica-publicdir
+          persistentVolumeClaim:
+            claimName: {{ template "monica.fullname" . }}-publicdir
         {{- end }}
         {{- with .Values.monica.extraVolumes }}
         {{ toYaml . | indent 8 }}
@@ -358,6 +304,6 @@ spec:
         fsGroup: 33
         {{- end }}
 
-      {{- if .Values.serviceAccount.create }}
+      {{- if .Values.rbac.create }}
       serviceAccountName: {{ include "monica.serviceAccountName" . }}
       {{- end }}

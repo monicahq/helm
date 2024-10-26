@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.10](https://img.shields.io/badge/Version-1.0.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.11](https://img.shields.io/badge/Version-1.0.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -14,11 +14,10 @@ A Helm chart for Kubernetes to install Monica
 ## Source Code
 
 * <https://github.com/monicahq/helm>
-* <https://github.com/monicahq/docker>
 
 ## Requirements
 
-Kubernetes: `>=1.16.0-0`
+Kubernetes: `>=1.31.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
@@ -98,6 +97,8 @@ Kubernetes: `>=1.16.0-0`
 | monica.phpConfigs | object | `{}` |  |
 | monica.queue.enabled | bool | `false` |  |
 | monica.queue.lifecycle | object | `{}` |  |
+| monica.queue.priorityClassName | string | `"important"` |  |
+| monica.queue.terminationGracePeriodSeconds | int | `20` |  |
 | monica.storagedir | string | `"/var/www/html/storage"` |  |
 | monica.strategy.type | string | `"Recreate"` |  |
 | nameOverride | string | `""` |  |
@@ -120,6 +121,7 @@ Kubernetes: `>=1.16.0-0`
 | postgresql.global.postgresql.auth.password | string | `"secret"` |  |
 | postgresql.global.postgresql.auth.username | string | `"monica"` |  |
 | postgresql.primary.persistence.enabled | bool | `false` |  |
+| rbac.create | bool | `true` |  |
 | readinessProbe.enabled | bool | `true` |  |
 | readinessProbe.failureThreshold | int | `3` |  |
 | readinessProbe.initialDelaySeconds | int | `10` |  |
@@ -138,7 +140,7 @@ Kubernetes: `>=1.16.0-0`
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `""` |  |
+| serviceAccount.name | string | `nil` |  |
 | startupProbe.enabled | bool | `false` |  |
 | startupProbe.failureThreshold | int | `30` |  |
 | startupProbe.initialDelaySeconds | int | `30` |  |

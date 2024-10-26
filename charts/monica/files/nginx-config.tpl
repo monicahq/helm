@@ -74,7 +74,7 @@ server {
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 
         # Check that the PHP script exists before passing it
-        # try_files $fastcgi_script_name =404;
+        try_files $fastcgi_script_name =404;
 
         fastcgi_pass php-handler;
         fastcgi_index index.php;
