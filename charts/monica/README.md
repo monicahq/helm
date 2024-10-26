@@ -17,7 +17,7 @@ A Helm chart for Kubernetes to install Monica
 
 ## Requirements
 
-Kubernetes: `>=1.31.0-0`
+Kubernetes: `>=1.16.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|

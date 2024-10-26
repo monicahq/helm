@@ -268,3 +268,22 @@ Create volume mounts for the monica storagedir.
   subPath: {{ $key }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Create volumes for the monica storagedir.
+*/}}
+{{- define "monica.volumes" -}}
+{{- if .Values.persistence.enabled }}
+- name: monica-storage
+  persistentVolumeClaim:
+    claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
+{{- end }}
+{{- if .Values.monica.phpConfigs }}
+- name: monica-phpconfig
+  configMap:
+    name: {{ template "monica.fullname" . }}-phpconfig
+{{- end }}
+{{- with .Values.monica.extraVolumes }}
+{{ toYaml . }}
+{{- end }}
+{{- end -}}

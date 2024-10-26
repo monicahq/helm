@@ -36,13 +36,5 @@ spec:
                 {{- include "monica.volumeMounts" . | trim | nindent 16 }}
           restartPolicy: Never
           volumes:
-            {{- if .Values.persistence.enabled }}
-            - name: monica-storage
-              persistentVolumeClaim:
-                claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
-            {{- end }}
-            {{- with .Values.monica.extraVolumes }}
-            {{ toYaml . | indent 12 }}
-            {{- end }}
-
+            {{- include "monica.volumes" . | trim | nindent 12 }}
 {{- end }}

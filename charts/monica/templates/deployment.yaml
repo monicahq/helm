@@ -270,16 +270,7 @@ spec:
       {{- end }}
 
       volumes:
-        {{- if .Values.persistence.enabled }}
-        - name: monica-storage
-          persistentVolumeClaim:
-            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
-        {{- end }}
-        {{- if .Values.monica.phpConfigs }}
-        - name: monica-phpconfig
-          configMap:
-            name: {{ template "monica.fullname" . }}-phpconfig
-        {{- end }}
+        {{- include "monica.volumes" . | trim | nindent 8 }}
         {{- if .Values.nginx.enabled }}
         - name: monica-nginx-config
           configMap:
@@ -287,9 +278,6 @@ spec:
         - name: monica-publicdir
           persistentVolumeClaim:
             claimName: {{ template "monica.fullname" . }}-publicdir
-        {{- end }}
-        {{- with .Values.monica.extraVolumes }}
-        {{ toYaml . | indent 8 }}
         {{- end }}
 
       securityContext:

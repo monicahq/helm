@@ -6,3 +6,9 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
+
+  # Maintain dependencies for Helm
+  - package-ecosystem: docker
+    directory: /charts/monica
+    schedule:
+      interval: weekly
