@@ -7,6 +7,9 @@ metadata:
   labels:
     {{- include "monica.labels" . | nindent 4 }}
     app.kubernetes.io/component: cronjob
+  annotations:
+    helm.sh/hook: post-install,post-upgrade,post-rollback
+    helm.sh/hook-weight: "15"
 spec:
   schedule: "*/1 * * * *"
   concurrencyPolicy: Forbid

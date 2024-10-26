@@ -218,7 +218,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.monica.extraInitContainers .Values.mariadb.enabled .Values.postgresql.enabled }}
+      {{- if or .Values.monica.extraInitContainers .Values.mariadb.enabled .Values.postgresql.enabled .Values.nginx.enabled }}
       initContainers:
         {{- with .Values.monica.extraInitContainers }}
         {{- toYaml . | nindent 8 }}
@@ -258,7 +258,19 @@ spec:
             - "-c"
             - "until pg_isready -h ${POSTGRES_HOST} -U ${POSTGRES_USER} ; do sleep 2 ; done"
         {{- end }}
-      {{- end }}{{/* end-if .Values.monica.extraInitContainers .Values.mariadb.enabled .Values.postgresql.enabled */}}
+        {{- if .Values.nginx.enabled }}
+        - name: monica-nginx-init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "sh"
+            - "-c"
+            - {{ .Files.Get "files/init-publicdir.sh" | quote }}
+          volumeMounts:
+            - name: monica-publicdir
+              mountPath: /public
+        {{- end }}
+      {{- end }}{{/* end-if .Values.monica.extraInitContainers .Values.mariadb.enabled .Values.postgresql.enabled .Values.nginx.enabled */}}
 
       {{- with .Values.affinity }}
       affinity:
@@ -277,8 +289,7 @@ spec:
           configMap:
             name: {{ template "monica.fullname" . }}-nginxconfig
         - name: monica-publicdir
-          persistentVolumeClaim:
-            claimName: {{ template "monica.fullname" . }}-publicdir
+          emptyDir: {}
         {{- end }}
 
       securityContext:

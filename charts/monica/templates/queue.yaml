@@ -16,6 +16,9 @@ metadata:
   labels:
     {{- include "monica.labels" . | nindent 4 }}
     app.kubernetes.io/component: queue
+  annotations:
+    helm.sh/hook: post-install,post-upgrade,post-rollback
+    helm.sh/hook-weight: "10"
 spec:
   selector:
     matchLabels:

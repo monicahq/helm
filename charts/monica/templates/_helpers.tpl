@@ -261,11 +261,17 @@ Create volume mounts for the monica storagedir.
 {{- with .Values.monica.extraVolumeMounts }}
 {{ toYaml . }}
 {{- end }}
-{{- $nginxEnabled := .Values.nginx.enabled -}}
 {{- range $key, $value := .Values.monica.phpConfigs }}
 - name: monica-phpconfig
-  mountPath: {{ $nginxEnabled | ternary (printf "/usr/local/etc/php-fpm.d/%s" $key | quote) (printf "/usr/local/etc/php/conf.d/%s" $key | quote) }}
+  mountPath: {{ printf "/usr/local/etc/php/conf.d/%s" $key | quote }}
   subPath: {{ $key }}
+{{- end }}
+{{- if .Values.nginx.enabled }}
+{{- range $key, $value := .Values.monica.phpConfigs }}
+- name: monica-phpconfig
+  mountPath: {{ printf "/usr/local/etc/php-fpm.d/%s" $key | quote }}
+  subPath: {{ $key }}
+{{- end }}
 {{- end }}
 {{- end -}}
 
