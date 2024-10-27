@@ -59,3 +59,18 @@ annotations:
       url: https://www.monicahq.com/
     - name: Source Code
       url: https://github.com/monicahq/monica
+  artifacthub.io/changes: |
+    - kind: changed
+      description: Use a CronJob for the cron job instead of a container
+    - kind: changed
+      description: Use a DaemonSet for the queue instead of a container
+    - kind: fixed
+      description: Fix static file rendering (css, js, ...) for nginx using and emptydir
+    - kind: fixed
+      description: Fixed hpa test value
+    - kind: fixed
+      description: Fixed phpConfigs rendering
+    - kind: added
+      description: Added a rbac.create option
+    - kind: added
+      description: Added a monica.queue.priorityClassName option
