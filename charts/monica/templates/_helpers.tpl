@@ -141,7 +141,7 @@ Create environment variables used to configure the monica container as well as t
 - name: DB_DATABASE
   {{- if .Values.postgresql.auth.database }}
   value: {{ .Values.postgresql.auth.database | quote }}
-  {{ else }}
+  {{- else }}
   value: {{ .Values.postgresql.global.postgresql.auth.database | quote }}
   {{- end }}
 - name: DB_USERNAME
@@ -261,10 +261,35 @@ Create volume mounts for the monica storagedir.
 {{- with .Values.monica.extraVolumeMounts }}
 {{ toYaml . }}
 {{- end }}
-{{- $nginxEnabled := .Values.nginx.enabled -}}
 {{- range $key, $value := .Values.monica.phpConfigs }}
 - name: monica-phpconfig
-  mountPath: {{ $nginxEnabled | ternary (printf "/usr/local/etc/php-fpm.d/%s" $key | quote) (printf "/usr/local/etc/php/conf.d/%s" $key | quote) }}
+  mountPath: {{ printf "/usr/local/etc/php/conf.d/%s" $key | quote }}
   subPath: {{ $key }}
+{{- end }}
+{{- if .Values.nginx.enabled }}
+{{- range $key, $value := .Values.monica.phpConfigs }}
+- name: monica-phpconfig
+  mountPath: {{ printf "/usr/local/etc/php-fpm.d/%s" $key | quote }}
+  subPath: {{ $key }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Create volumes for the monica storagedir.
+*/}}
+{{- define "monica.volumes" -}}
+{{- if .Values.persistence.enabled }}
+- name: monica-storage
+  persistentVolumeClaim:
+    claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "monica.fullname" . }}-storage{{- end }}
+{{- end }}
+{{- if .Values.monica.phpConfigs }}
+- name: monica-phpconfig
+  configMap:
+    name: {{ template "monica.fullname" . }}-phpconfig
+{{- end }}
+{{- with .Values.monica.extraVolumes }}
+{{ toYaml . }}
 {{- end }}
 {{- end -}}
