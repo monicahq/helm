@@ -6,6 +6,7 @@ on:
 env:
   helm: v3.16.2
   python-version: 3.x
+  kubectl: v1.16.0
 
 jobs:
   linter:
@@ -39,10 +40,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        versions:
-          - kubectl: v1.16.0
-          - kubectl: v1.29.3
-
         test_cases:
           - name: Default - no custom values
 
@@ -101,7 +98,7 @@ jobs:
         uses: helm/kind-action@v1
         if: steps.list-changed.outputs.changed == 'true'
         with:
-          kubectl_version: ${{ matrix.versions.kubectl }}
+          kubectl_version: ${{ env.kubectl }}
 
       - name: Copy test case file
         if: matrix.test_cases.file != ''
