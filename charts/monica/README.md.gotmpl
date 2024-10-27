@@ -1,0 +1,157 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+## Installing the Chart
+
+To install the chart with the release name `my-release`:
+
+```console
+helm repo add monica https://monicahq.github.io/helm/
+helm install my-release monica/monica
+```
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```console
+helm delete my-release
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+## Database
+
+By default, the chart uses a SQLite database. If you want to use a different database, set the `internalDatabase.enabled` parameters to `false` in your `values.yaml`.
+
+```yaml
+internalDatabase:
+  enabled: false
+```
+
+You can also use an external database by setting the `externalDatabase.enabled` parameters to `true` in your `values.yaml`.
+
+```yaml
+internalDatabase:
+  enabled: false
+externalDatabase:
+  enabled: true
+  type: mysql
+  host: myhost.test
+  user: monica
+  password: secret
+  database: monica
+```
+
+Or you can use a mariadb database by setting the `mariadb.enabled` parameters to `true` in your `values.yaml`.
+
+```yaml
+internalDatabase:
+  enabled: false
+mariadb:
+  enabled: true
+```
+
+## Cron job
+
+Monica requires a cron job to run reminders and other [scheduled](https://laravel.com/docs/11.x/scheduling) tasks. You can enable the cron job by setting the `monica.cronjob.enabled` parameters to `true` in your `values.yaml`.
+
+```yaml
+monica:
+  cronJob:
+    enabled: true
+```
+
+## Queue worker
+
+Monica works better with a [queue](https://laravel.com/docs/11.x/queues) worker. You can enable the queue worker by setting the `monica.queue.enabled` parameters to `true` in your `values.yaml`.
+You can use the `database` for `QUEUE_CONNECTION`, but other options exists.
+
+```yaml
+monica:
+  queue:
+    enabled: true
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: database
+```
+
+## Add environment variables
+
+To add environment variables to the monica container, set the `monica.extraEnv` parameters in your `values.yaml`.
+
+Example:
+
+```yaml
+monica:
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: redis
+    - name: CACHE_STORE
+      value: memcached
+    - name: SCOUT_DRIVER
+      value: meilisearch
+    - name: SCOUT_QUEUE
+      value: "true"
+    - name: PHP_UPLOAD_LIMIT
+      value: 10G
+```
+
+## Using nginx
+
+To use nginx instead of apache to serve monica, set the following parameters in your `values.yaml`:
+
+```yaml
+# This uses the fpm flavor of the monica image
+image:
+  tag: main-fpm
+
+# this deploys an nginx container within the monica pod
+nginx
+  enabled: true
+```
+
+## Php configuration
+
+You may want special [`php.ini`](https://www.php.net/manual/en/ini.list.php) values. For instance, perhaps your setup requires a bit more memory. You can add additional `php.ini` files in the values.yaml by providing `monica.phpConfigs.NAME_OF_FILE`.
+
+Example:
+
+```yaml
+monica:
+  phpConfigs:
+    zz-error.ini: |-
+      error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+      display_errors = Off
+```
+
+> [!Note]
+> Be sure to prefix your file name with `zz` to ensure it is loaded at the end.
+
+
+## HPA (Clustering)
+
+If you want to have multiple Monica containers, regardless of dynamic or static sizes, you need to use shared persistence between the containers.
+
+Minimum cluster compatible persistence settings:
+```yaml
+persistence:
+  enabled: true
+  accessMode: ReadWriteMany
+```
+
+{{ template "helm-docs.versionFooter" . }}
