@@ -2,7 +2,7 @@
 
 [Helm](https://helm.sh) repo for different charts related to Monica which can be installed on [Kubernetes](https://kubernetes.io)
 
-### Add Helm repository
+## Add Helm repository
 
 To install the repo just run:
 
@@ -11,7 +11,7 @@ helm repo add monica https://monicahq.github.io/helm/
 helm repo update
 ```
 
-### Helm Charts
+## Helm Charts
 
 * [monica](https://monicahq.github.io/helm/)
 
@@ -24,3 +24,18 @@ helm repo update
   ```
 
 For more information, please checkout the chart level [README.md](./charts/monica/README.md).
+
+
+## Contributing
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## License
+
+Author: [Alexis Saettler](https://github.com/asbiin)
+
+This project is part of [MonicaHQ](https://github.com/monicahq/).
+
+Copyright © 2019–2024.
+
+Licensed under the AGPL-3.0 License. [View license](LICENSE.md).
