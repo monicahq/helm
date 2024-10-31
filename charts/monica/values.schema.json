@@ -1,6 +1,7 @@
 {
-  "$id": "https://example.com/schema",
+  "$id": "https://monicahq.github.io/helm/schema",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
   "description": "Schema for Helm values",
   "properties": {
     "affinity": {
@@ -13,16 +14,28 @@
           "type": "boolean"
         },
         "maxReplicas": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "minReplicas": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "targetCPU": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "targetMemory": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       },
       "type": "object"
@@ -52,7 +65,7 @@
           "type": "object"
         },
         "host": {
-          "type": "null"
+          "type": "string"
         },
         "password": {
           "type": "string"
@@ -84,6 +97,10 @@
           "type": "string"
         }
       },
+      "required": [
+        "repository",
+        "tag"
+      ],
       "type": "object"
     },
     "ingress": {
@@ -93,7 +110,7 @@
           "type": "object"
         },
         "className": {
-          "type": "null"
+          "type": "string"
         },
         "enabled": {
           "type": "boolean"
@@ -182,13 +199,13 @@
                   "type": "boolean"
                 },
                 "existingClaim": {
-                  "type": "null"
+                  "type": "string"
                 },
                 "size": {
                   "type": "string"
                 },
                 "storageClass": {
-                  "type": "null"
+                  "type": "string"
                 }
               },
               "type": "object"
@@ -254,10 +271,6 @@
           "properties": {
             "enabled": {
               "type": "boolean"
-            },
-            "lifecycle": {
-              "properties": {},
-              "type": "object"
             },
             "resources": {
               "properties": {},
@@ -374,7 +387,7 @@
         "config": {
           "properties": {
             "custom": {
-              "type": "null"
+              "type": "string"
             },
             "default": {
               "type": "boolean"
@@ -426,13 +439,13 @@
           "type": "boolean"
         },
         "existingClaim": {
-          "type": "null"
+          "type": "string"
         },
         "size": {
           "type": "string"
         },
         "storageClass": {
-          "type": "null"
+          "type": "string"
         }
       },
       "type": "object"
@@ -482,10 +495,10 @@
                   "type": "boolean"
                 },
                 "existingClaim": {
-                  "type": "null"
+                  "type": "string"
                 },
                 "storageClass": {
-                  "type": "null"
+                  "type": "string"
                 }
               },
               "type": "object"
@@ -559,16 +572,38 @@
           "properties": {},
           "type": "object"
         },
+        "loadBalancerClass": {
+          "type": "string"
+        },
         "loadBalancerIP": {
           "type": "string"
         },
         "nodePort": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "port": {
           "type": "integer"
         },
+        "sessionAffinity": {
+          "enum": [
+            "ClusterIP",
+            "None"
+          ],
+          "type": "string"
+        },
+        "sessionAffinityConfig": {
+          "properties": {},
+          "type": "object"
+        },
         "type": {
+          "enum": [
+            "ClusterIP",
+            "LoadBalancer",
+            null
+          ],
           "type": "string"
         }
       },
@@ -584,7 +619,7 @@
           "type": "boolean"
         },
         "name": {
-          "type": "null"
+          "type": "string"
         }
       },
       "type": "object"

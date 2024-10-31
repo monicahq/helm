@@ -6,6 +6,7 @@ indent: 2
 output: charts/monica/values.schema.json
 
 schemaRoot:
-  id: https://example.com/schema
+  id: https://monicahq.github.io/helm/schema
   title: Monica Helm Charts Values Schema
   description: Schema for Helm values
+  additionalProperties: true

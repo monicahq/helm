@@ -1,8 +1,8 @@
 image:
   # -- The monica image repository to pull from
-  repository: ghcr.io/monicahq/monica-next
+  repository: ghcr.io/monicahq/monica-next # @schema required:true
   # -- The monica image tag to pull
-  tag: main
+  tag: main # @schema required:true
   # repository: monica
   # tag: 5.0-apache
   # -- The monica image pull policy
@@ -34,7 +34,7 @@ ingress:
   # -- Enable ingress controller resource
   enabled: false
   # -- Name of the ingress class to use
-  className:
+  className: ""
   # -- An array of service annotations
   annotations: {}
   #  nginx.ingress.kubernetes.io/proxy-body-size: 4G
@@ -164,12 +164,6 @@ monica:
     # -- Enable cronjob to execute monica scheduled tasks
     enabled: false
 
-    # -- Allow configuration of lifecycle hooks.
-    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
-    lifecycle: {}
-      # postStartCommand: []
-      # preStopCommand: []
-
     # -- cronjob resources definition (limits, requests)
     resources: {}
 
@@ -213,7 +207,7 @@ nginx:
     # -- Generates the default nginx config
     default: true
     # -- Custom nginx configuration
-    custom:
+    custom: ""
     #  worker_processes  1;..
 
   # -- nginx resources definition (limits, requests)
@@ -234,19 +228,14 @@ internalDatabase:
 externalDatabase:
   # -- Enable external database
   enabled: false
-
   # -- Database type. Supported database engines: `mysql` or `postgresql`
   type: mysql
-
   # -- Database host
-  host:
-
+  host: ""
   # -- Database user
   user: monica
-
   # -- Database password
   password: secret
-
   # -- Database name
   database: monica
 
@@ -285,9 +274,9 @@ mariadb:
       # -- Enable MariaDB persistence using Persistent Volume Claims
       enabled: false
       # -- Use an existing Persistent Volume Claim (must be created ahead of time)
-      existingClaim:
+      existingClaim: ""
       # -- Storage class of backing PVC
-      storageClass:
+      storageClass: ""
       # -- Access Mode for the PVC
       accessMode: ReadWriteOnce
       # -- PVC Storage Request
@@ -303,20 +292,21 @@ postgresql:
   global:
     postgresql:
       auth:
+        # -- Database name
+        database: monica
         # -- Database user
         username: monica
         # -- Database password
         password: secret
-        # -- Database name
-        database: monica
+        
   primary:
     persistence:
       # -- Enable PostgreSQL persistence using Persistent Volume Claims
       enabled: false
       # -- Use an existing Persistent Volume Claim (must be created ahead of time)
-      existingClaim:
+      existingClaim: ""
       # -- Storage class of backing PVC
-      storageClass:
+      storageClass: ""
 
 ##
 ## Redis chart configuration
@@ -330,8 +320,8 @@ redis:
     enabled: true
     # -- Redis password
     password: secret
-    # existingSecret
-    # existingSecretPasswordKey
+    # existingSecret:
+    # existingSecretPasswordKey:
 
 ##
 ## Memcached chart configuration
@@ -347,8 +337,8 @@ memcached:
     username: monica
     # -- Memcached password
     password: secret
-    # existingSecret
-    # existingSecretPasswordKey
+    # existingSecret:
+    # existingSecretPasswordKey:
   containerSecurityContext:
     # @ignored
     readOnlyRootFilesystem: false
@@ -368,17 +358,28 @@ meilisearch:
 
 service:
   # -- Service type
-  type: ClusterIP
+  type: ClusterIP # @schema enum:[ClusterIP, LoadBalancer, null]
   # -- Service port
   port: 8080
   # -- Load Balancer IP (optional, only works with service.type LoadBalancer)
   loadBalancerIP: ""
+  # -- Load Balancer Class (optional, only works with service.type LoadBalancer)
+  loadBalancerClass: ""
   # -- Node Port (optional, only works with service.type NodePort)
-  nodePort:
+  nodePort: # @schema type:[integer, null]
   # -- Service annotations
   annotations: {}
     ## Insert your annotations such as below
     # test/test: pumuckel
+  # -- Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+  ## If "ClientIP", consecutive client requests will be directed to the same Pod
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+  sessionAffinity: None # @schema enum:[ClusterIP, None]
+  # -- Additional settings for the sessionAffinity
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  sessionAffinityConfig: {}
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -394,12 +395,12 @@ persistence:
   # If undefined (the default) or set to null, no storageClassName spec is
   #   set, choosing the default provisioner. (gp2 on AWS, standard on
   #   GKE, AWS & OpenStack)
-  storageClass:
+  storageClass: ""
 
   # -- A manually managed Persistent Volume and Claim
   #  Requires persistence.enabled: true
   #  If defined, PVC must be created manually before volume will be bound
-  existingClaim:
+  existingClaim: ""
 
   # -- Persistent Volume Access Mode
   accessMode: ReadWriteOnce
@@ -471,13 +472,13 @@ autoscaling:
   # -- Enable autoscaling
   enabled: false
   # -- Minimum number of replicas to scale back
-  minReplicas:
+  minReplicas: # @schema type:[integer, null]
   # -- Maximum number of replicas to scale out
-  maxReplicas:
+  maxReplicas: # @schema type:[integer, null]
   # -- Target CPU utilization percentage
-  targetCPU:
+  targetCPU: # @schema type:[integer, null]
   # -- Target Memory utilization percentage
-  targetMemory:
+  targetMemory: # @schema type:[integer, null]
 
 
 # -- Node labels for pod assignment
@@ -500,7 +501,7 @@ serviceAccount:
   annotations: {}
   # -- The name of the service account to use.
   #  If not set and create is true, a name is generated using the fullname template
-  name:
+  name: ""
 
 # @ignored
 tests:

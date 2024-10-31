@@ -61,7 +61,7 @@ Kubernetes: `>=1.16.0-0`
 | externalDatabase.database | string | `"monica"` | Database name |
 | externalDatabase.enabled | bool | `false` | Enable external database |
 | externalDatabase.existingSecret.enabled | bool | `false` | Use an existing secret. If enabled set: `secretName`, `usernameKey`, `passwordKey` |
-| externalDatabase.host | string | `nil` | Database host |
+| externalDatabase.host | string | `""` | Database host |
 | externalDatabase.password | string | `"secret"` | Database password |
 | externalDatabase.type | string | `"mysql"` | Database type. Supported database engines: `mysql` or `postgresql` |
 | externalDatabase.user | string | `"monica"` | Database user |
@@ -71,7 +71,7 @@ Kubernetes: `>=1.16.0-0`
 | image.repository | string | `"ghcr.io/monicahq/monica-next"` | The monica image repository to pull from |
 | image.tag | string | `"main"` | The monica image tag to pull |
 | ingress.annotations | object | `{}` | An array of service annotations |
-| ingress.className | string | `nil` | Name of the ingress class to use |
+| ingress.className | string | `""` | Name of the ingress class to use |
 | ingress.enabled | bool | `false` | Enable ingress controller resource |
 | ingress.labels | object | `{}` | An array of service labels |
 | ingress.path | string | `"/"` | The Path to use in Ingress' paths |
@@ -92,9 +92,9 @@ Kubernetes: `>=1.16.0-0`
 | mariadb.enabled | bool | `false` | Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters |
 | mariadb.primary.persistence.accessMode | string | `"ReadWriteOnce"` | Access Mode for the PVC |
 | mariadb.primary.persistence.enabled | bool | `false` | Enable MariaDB persistence using Persistent Volume Claims |
-| mariadb.primary.persistence.existingClaim | string | `nil` | Use an existing Persistent Volume Claim (must be created ahead of time) |
+| mariadb.primary.persistence.existingClaim | string | `""` | Use an existing Persistent Volume Claim (must be created ahead of time) |
 | mariadb.primary.persistence.size | string | `"8Gi"` | PVC Storage Request |
-| mariadb.primary.persistence.storageClass | string | `nil` | Storage class of backing PVC |
+| mariadb.primary.persistence.storageClass | string | `""` | Storage class of backing PVC |
 | meilisearch.enabled | bool | `false` | Enable Meilisearch. Use with `SCOUT_DRIVER=meilisearch` and `SCOUT_QUEUE=true` variables. |
 | meilisearch.environment.MEILI_ENV | string | `"production"` |  |
 | memcached.auth.enabled | bool | `true` | Enable memcached authentication |
@@ -104,7 +104,6 @@ Kubernetes: `>=1.16.0-0`
 | memcached.enabled | bool | `false` | Enable Memcached. Use with a `CACHE_STORE=memcached` variable (can also be used for `SESSION_DRIVER`). |
 | monica.containerPort | int | `80` | Customize container port |
 | monica.cronjob.enabled | bool | `false` | Enable cronjob to execute monica scheduled tasks |
-| monica.cronjob.lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
 | monica.cronjob.resources | object | `{}` | cronjob resources definition (limits, requests) |
 | monica.existingSecret.enabled | bool | `false` | Use an existing secret. If enabled, you need to set: `secretName`, `appKey`, `mailUsernameKey`, `mailPasswordKey` |
 | monica.extraEnv | list | `[]` | Extra environment variables |
@@ -128,7 +127,7 @@ Kubernetes: `>=1.16.0-0`
 | monica.storagedir | string | `"/var/www/html/storage"` | Monica storage directory |
 | monica.strategy | object | `{"type":"Recreate"}` | Strategy used to replace old pods. IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes. ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy |
 | nameOverride | string | `""` | Add a suffix to the name of the chart |
-| nginx.config.custom | string | `nil` | Custom nginx configuration |
+| nginx.config.custom | string | `""` | Custom nginx configuration |
 | nginx.config.default | bool | `true` | Generates the default nginx config |
 | nginx.containerPort | int | `80` | Customize container port |
 | nginx.enabled | bool | `false` | Enable nginx. You need to set an fpm version of the image for monica if you want to use nginx. |
@@ -140,9 +139,9 @@ Kubernetes: `>=1.16.0-0`
 | persistence.accessMode | string | `"ReadWriteOnce"` | Persistent Volume Access Mode |
 | persistence.annotations | object | `{}` | Persistent Volume Claim annotations |
 | persistence.enabled | bool | `false` | Enable Monica persistence using Persistent Volume Claims |
-| persistence.existingClaim | string | `nil` | A manually managed Persistent Volume and Claim  Requires persistence.enabled: true  If defined, PVC must be created manually before volume will be bound |
+| persistence.existingClaim | string | `""` | A manually managed Persistent Volume and Claim  Requires persistence.enabled: true  If defined, PVC must be created manually before volume will be bound |
 | persistence.size | string | `"4Gi"` | Persistent Volume Storage Request |
-| persistence.storageClass | string | `nil` | Persistent Volume Storage Class If defined, storageClassName: <storageClass> If set to "-", storageClassName: "", which disables dynamic provisioning If undefined (the default) or set to null, no storageClassName spec is   set, choosing the default provisioner. (gp2 on AWS, standard on   GKE, AWS & OpenStack) |
+| persistence.storageClass | string | `""` | Persistent Volume Storage Class If defined, storageClassName: <storageClass> If set to "-", storageClassName: "", which disables dynamic provisioning If undefined (the default) or set to null, no storageClassName spec is   set, choosing the default provisioner. (gp2 on AWS, standard on   GKE, AWS & OpenStack) |
 | podAnnotations | object | `{}` | Annotations to be added at 'pod' level |
 | podLabels | object | `{}` | Labels to be added at 'pod' level |
 | postgresql.enabled | bool | `false` | Whether to deploy a postgresql server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters |
@@ -150,8 +149,8 @@ Kubernetes: `>=1.16.0-0`
 | postgresql.global.postgresql.auth.password | string | `"secret"` | Database password |
 | postgresql.global.postgresql.auth.username | string | `"monica"` | Database user |
 | postgresql.primary.persistence.enabled | bool | `false` | Enable PostgreSQL persistence using Persistent Volume Claims |
-| postgresql.primary.persistence.existingClaim | string | `nil` | Use an existing Persistent Volume Claim (must be created ahead of time) |
-| postgresql.primary.persistence.storageClass | string | `nil` | Storage class of backing PVC |
+| postgresql.primary.persistence.existingClaim | string | `""` | Use an existing Persistent Volume Claim (must be created ahead of time) |
+| postgresql.primary.persistence.storageClass | string | `""` | Storage class of backing PVC |
 | rbac.create | bool | `true` | Specifies whether RBAC resources should be created |
 | readinessProbe.enabled | bool | `true` | Enable readiness probe |
 | readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the probe |
@@ -165,13 +164,16 @@ Kubernetes: `>=1.16.0-0`
 | replicaCount | int | `1` | Number of pods to be deployed |
 | resources | object | `{}` | Define resources requests and limits for the pod (limits, requests) |
 | service.annotations | object | `{}` | Service annotations |
+| service.loadBalancerClass | string | `""` | Load Balancer Class (optional, only works with service.type LoadBalancer) |
 | service.loadBalancerIP | string | `""` | Load Balancer IP (optional, only works with service.type LoadBalancer) |
 | service.nodePort | string | `nil` | Node Port (optional, only works with service.type NodePort) |
 | service.port | int | `8080` | Service port |
+| service.sessionAffinity | string | `"None"` | Session Affinity for Kubernetes service, can be "None" or "ClientIP" # If "ClientIP", consecutive client requests will be directed to the same Pod # ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies |
+| service.sessionAffinityConfig | object | `{}` | Additional settings for the sessionAffinity # sessionAffinityConfig: #   clientIP: #     timeoutSeconds: 300 |
 | service.type | string | `"ClusterIP"` | Service type |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `nil` | The name of the service account to use.  If not set and create is true, a name is generated using the fullname template |
+| serviceAccount.name | string | `""` | The name of the service account to use.  If not set and create is true, a name is generated using the fullname template |
 | startupProbe.enabled | bool | `false` | Enable startup probe |
 | startupProbe.failureThreshold | int | `30` | Minimum consecutive failures for the probe |
 | startupProbe.initialDelaySeconds | int | `30` | Delay before this probe is initiated |
