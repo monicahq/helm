@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.11
+version: 1.0.12
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
@@ -12,6 +12,9 @@ maintainers:
     email: alexis@saettler.org
 keywords:
   - crm
+  - prm
+  - social
+  - laravel
 kubeVersion: ">=1.16.0-0"
 sources:
   - https://github.com/monicahq/helm
@@ -61,16 +64,10 @@ annotations:
       url: https://github.com/monicahq/monica
   artifacthub.io/changes: |
     - kind: changed
-      description: Use a CronJob for the cron job instead of a container
+      description: Update chart documentation
+    - kind: fixed
+      description: Fix resources usage
+    - kind: added
+      description: Add resources for cronjob and queue
     - kind: changed
-      description: Use a DaemonSet for the queue instead of a container
-    - kind: fixed
-      description: Fix static file rendering (css, js, ...) for nginx using and emptydir
-    - kind: fixed
-      description: Fixed hpa test value
-    - kind: fixed
-      description: Fixed phpConfigs rendering
-    - kind: added
-      description: Added a rbac.create option
-    - kind: added
-      description: Added a monica.queue.priorityClassName option
+      description: Renamed 'hpa' to 'autoscaling', and its child values

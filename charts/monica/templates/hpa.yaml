@@ -1,6 +1,10 @@
-{{- if .Values.hpa.enabled }}
+{{- if .Values.autoscaling.enabled }}
 ---
+{{- if semverCompare "<1.23-0" $.Capabilities.KubeVersion.GitVersion -}}
 apiVersion: autoscaling/v1
+{{- else }}
+apiVersion: autoscaling/v2
+{{- end }}
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "monica.fullname" . }}
@@ -12,9 +16,33 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "monica.fullname" . }}
-  {{- with .Values.hpa }}
-  minReplicas: {{ .minPods }}
-  maxReplicas: {{ .maxPods }}
-  targetCPUUtilizationPercentage: {{ .cputhreshold }}
+  {{- with .Values.autoscaling }}
+  minReplicas: {{ .minReplicas }}
+  maxReplicas: {{ .maxReplicas }}
+  metrics:
+    {{- if .targetMemory }}
+    - type: Resource
+      resource:
+        name: memory
+        {{- if semverCompare "<1.23-0" $.Capabilities.KubeVersion.GitVersion -}}
+        targetAverageUtilization: {{ .targetMemory }}
+        {{- else }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .targetMemory }}
+        {{- end }}
+    {{- end }}
+    {{- if .targetCPU }}
+    - type: Resource
+      resource:
+        name: cpu
+        {{- if semverCompare "<1.23-0" $.Capabilities.KubeVersion.GitVersion -}}
+        targetAverageUtilization: {{ .targetCPU }}
+        {{- else }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .targetCPU }}
+        {{- end }}
+    {{- end }}
   {{- end }}
 {{- end }}

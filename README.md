@@ -1,12 +1,14 @@
 # Monica Helm Charts
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/monica)](https://artifacthub.io/packages/search?repo=monica)
+
 [Helm](https://helm.sh) repo for different charts related to Monica which can be installed on [Kubernetes](https://kubernetes.io)
 
 ## Add Helm repository
 
 To install the repo just run:
 
-```bash
+```console
 helm repo add monica https://monicahq.github.io/helm/
 helm repo update
 ```

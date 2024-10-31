@@ -1,27 +1,41 @@
 image:
-  repository: ghcr.io/monicahq/monica-next
-  tag: main
+  # -- The monica image repository to pull from
+  repository: ghcr.io/monicahq/monica-next  # @schema required:true
+  # -- The monica image tag to pull
+  tag: main  # @schema required:true
   # repository: monica
   # tag: 5.0-apache
+  # -- The monica image pull policy
   pullPolicy: IfNotPresent
-  # pullSecrets:
+  # -- Optionally specify an array of imagePullSecrets.
+  pullSecrets: []
   #   - myRegistrKeySecretName
 
+# -- Add a suffix to the name of the chart
 nameOverride: ""
+# -- Override the fullname of the chart
 fullnameOverride: ""
+# -- Annotations to be added at 'pod' level
 podAnnotations: {}
+# -- Labels to be added at 'pod' level
 podLabels: {}
+# -- Annotations to be added at 'deployment' level
 deploymentAnnotations: {}
+# -- Labels to be added at 'deployment' level
+deploymentLabels: {}
 
-# Number of replicas to be deployed
+# -- Number of pods to be deployed
 replicaCount: 1
 
 ## Allowing use of ingress controllers
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
+  # -- Enable ingress controller resource
   enabled: false
-  # className: nginx
+  # -- Name of the ingress class to use
+  className: ""
+  # -- An array of service annotations
   annotations: {}
   #  nginx.ingress.kubernetes.io/proxy-body-size: 4G
   #  kubernetes.io/tls-acme: "true"
@@ -47,46 +61,60 @@ ingress:
   #    - secretName: monica-tls
   #      hosts:
   #        - monica.kube.home
+  # -- An array of service labels
   labels: {}
+  # -- The Path to use in Ingress' paths
   path: /
+  # -- The PathType to use in Ingress' paths
   pathType: Prefix
 
 
-# Allow configuration of lifecycle hooks
+# -- Allow configuration of lifecycle hooks.
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
 lifecycle: {}
   # postStartCommand: []
   # preStopCommand: []
 
 monica:
+  # -- Application URL
   host: monica.kube.home
   ## Use an existing secret
   existingSecret:
+    # -- Use an existing secret. If enabled, you need to set: `secretName`, `appKey`, `mailUsernameKey`, `mailPasswordKey`
     enabled: false
     # secretName: nameofsecret
     # appKey: base64_key
     # mailUsernameKey: smtp_username
     # mailPasswordKey: smtp_password
-  # If web server is not binding default port, you can define it
-  # containerPort: 80
+  # -- Customize container port
+  containerPort: 80
+  # -- Monica storage directory
   storagedir: /var/www/html/storage
   mail:
+    # -- Enable email service
     enabled: false
+    # -- Email `from` address
     fromAddress: user
+    # -- Email `reply-to` address
     replyToAddress: user
     smtp:
+      # -- SMTP host
       host: domain.com
+      # -- SMTP encryption
       encryption: tls
+      # -- SMTP port
       port: 465
+      # -- SMTP username
       username: user
+      # -- SMTP password
       password: pass
-  # PHP Configuration files
+  # -- PHP Configuration files.
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
   phpConfigs: {}
 
-  ## Strategy used to replace old pods
-  ## IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes
-  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  # -- Strategy used to replace old pods.
+  # IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes.
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   strategy:
     type: Recreate
     # type: RollingUpdate
@@ -94,22 +122,21 @@ monica:
     #   maxSurge: 1
     #   maxUnavailable: 0
 
-  ##
-  ## Extra environment variables
-  extraEnv:
+  # -- Extra environment variables
+  extraEnv: []
   #  - name: SOME_SECRET_ENV
   #    valueFrom:
   #      secretKeyRef:
   #        name: monica
   #        key: secret_key
 
-  # Extra init containers that runs before pods start.
+  # -- Extra init containers that runs before pods start.
   extraInitContainers: []
   #  - name: do-something
   #    image: busybox
   #    command: ['do', 'something']
 
-  # Extra sidecar containers.
+  # -- Extra sidecar containers.
   extraSidecarContainers: []
   #  - name: monica-logger
   #    image: busybox
@@ -118,99 +145,103 @@ monica:
   #      - name: monica-storage
   #        mountPath: /run/monica/data
 
-  # Extra mounts for the pods.
-  extraVolumes:
+  # -- Extra volumes for the pods.
+  extraVolumes: []
   #  - name: nfs
   #    nfs:
   #      server: "10.0.0.1"
   #      path: "/var/www/html/storage"
   #      readOnly: false
-  extraVolumeMounts:
+  # -- Extra mounts for the pods.
+  extraVolumeMounts: []
   #  - name: nfs
   #    mountPath: "/var/www/html/storage"
-
-  # Extra secuurityContext parameters. For example you may need to define runAsNonRoot directive
-  # extraSecurityContext:
-  #   runAsUser: "33"
-  #   runAsGroup: "33"
-  #   runAsNonRoot: true
-  #   readOnlyRootFilesystem: true
 
   ##
   ## Cronjob to execute monica scheduled tasks
   ##
   cronjob:
+    # -- Enable cronjob to execute monica scheduled tasks
     enabled: false
 
-    # Allow configuration of lifecycle hooks
-    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
-    lifecycle: {}
-      # postStartCommand: []
-      # preStopCommand: []
+    # -- cronjob resources definition (limits, requests)
+    resources: {}
 
   ##
-  ## queue job to execute monica background tasks
+  ## Queue job to execute monica background tasks
   ##  Use in addition to a `QUEUE_CONNECTION` variable
   ##
   queue:
+    # -- Enable queue job to execute monica background tasks. Use in addition to a `QUEUE_CONNECTION` variable.
     enabled: false
 
-    # Allow configuration of lifecycle hooks
+    # -- Allow configuration of lifecycle hooks.
     # ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
     lifecycle: {}
       # postStartCommand: []
       # preStopCommand: []
+
+    # -- queue job resources definition (limits, requests)
+    resources: {}
+
+    # @ignored
     priorityClassName: important
+    # @ignored
     terminationGracePeriodSeconds: 20
 
+
 nginx:
-  ## You need to set an fpm version of the image for monica if you want to use nginx!
+  # -- Enable nginx. You need to set an fpm version of the image for monica if you want to use nginx.
   enabled: false
   image:
+    # -- The nginx image repository to pull from
     repository: nginx
+    # -- The nginx image tag to pull
     tag: alpine
+    # -- The nginx image pull policy
     pullPolicy: IfNotPresent
 
+  # -- Customize container port
   containerPort: 80
   config:
-    # This generates the default nginx config
+    # -- Generates the default nginx config
     default: true
-    # custom: |-
-    #     worker_processes  1;..
+    # -- Custom nginx configuration
+    custom: ""
+    #  worker_processes  1;..
 
+  # -- nginx resources definition (limits, requests)
   resources: {}
 
 ##
 ## Internal database configuration (SQLite)
 ##
 internalDatabase:
+  # -- Enable internal (SQLite) database
   enabled: true
-  ## Database fullpath file
+  # -- Database fullpath file
   name: /var/www/html/database/monica.sqlite
 
 ##
 ## External database configuration
 ##
 externalDatabase:
+  # -- Enable external database
   enabled: false
-
-  ## Supported database engines: mysql or postgresql
+  # -- Database type. Supported database engines: `mysql` or `postgresql`
   type: mysql
-
-  ## Database host
-  host:
-
-  ## Database user
+  # -- Database host
+  host: ""
+  # -- Database user
   user: monica
-
-  ## Database password
+  # -- Database password
   password: secret
-
-  ## Database name
+  # -- Database name
   database: monica
 
   ## Use an existing secret
   existingSecret:
+    # -- Use an existing secret. If enabled set: `secretName`, `usernameKey`, `passwordKey`
     enabled: false
     # secretName: nameofsecret
     # usernameKey: username
@@ -221,14 +252,18 @@ externalDatabase:
 ## for more options see https://github.com/bitnami/charts/tree/master/bitnami/mariadb
 ##
 mariadb:
-  ## Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
+  # -- Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
   enabled: false
 
   auth:
+    # -- Database name
     database: monica
+    # -- Database user
     username: monica
+    # -- Database password
     password: secret
 
+  # -- MariaDB architecture: `standalone` or `replication`
   architecture: standalone
 
   ## Enable persistence using Persistent Volume Claims
@@ -236,9 +271,15 @@ mariadb:
   ##
   primary:
     persistence:
+      # -- Enable MariaDB persistence using Persistent Volume Claims
       enabled: false
-      # storageClass: ""
+      # -- Use an existing Persistent Volume Claim (must be created ahead of time)
+      existingClaim: ""
+      # -- Storage class of backing PVC
+      storageClass: ""
+      # -- Access Mode for the PVC
       accessMode: ReadWriteOnce
+      # -- PVC Storage Request
       size: 8Gi
 
 ##
@@ -246,43 +287,60 @@ mariadb:
 ## for more options see https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 ##
 postgresql:
+  # -- Whether to deploy a postgresql server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
   enabled: false
   global:
     postgresql:
       auth:
-        username: monica
-        password: secret
+        # -- Database name
         database: monica
+        # -- Database user
+        username: monica
+        # -- Database password
+        password: secret
+
   primary:
     persistence:
+      # -- Enable PostgreSQL persistence using Persistent Volume Claims
       enabled: false
-      # storageClass: ""
+      # -- Use an existing Persistent Volume Claim (must be created ahead of time)
+      existingClaim: ""
+      # -- Storage class of backing PVC
+      storageClass: ""
 
 ##
 ## Redis chart configuration
 ## for more options see https://github.com/bitnami/charts/tree/master/bitnami/redis
 ##
 redis:
+  # -- Enable Redis. Use with a `QUEUE_CONNECTION=redis` variable (can also be used for `CACHE_STORE` and `SESSION_DRIVER`).
   enabled: false
   auth:
+    # -- Enable redis authentication
     enabled: true
+    # -- Redis password
     password: secret
-    # existingSecret
-    # existingSecretPasswordKey
+    # existingSecret:
+    # existingSecretPasswordKey:
 
 ##
 ## Memcached chart configuration
 ## for more options see https://github.com/bitnami/charts/tree/main/bitnami/memcached
 ##
 memcached:
+  # -- Enable Memcached. Use with a `CACHE_STORE=memcached` variable (can also be used for `SESSION_DRIVER`).
   enabled: false
   auth:
+    # -- Enable memcached authentication
     enabled: true
+    # -- Memcached user
     username: monica
+    # -- Memcached password
     password: secret
-    # existingSecret
-    # existingSecretPasswordKey
+    # existingSecret:
+    # existingSecretPasswordKey:
   containerSecurityContext:
+    # @ignored
     readOnlyRootFilesystem: false
 
 ##
@@ -290,6 +348,7 @@ memcached:
 ## for more options see https://github.com/meilisearch/meilisearch-kubernetes/tree/main/charts/meilisearch
 ##
 meilisearch:
+  # -- Enable Meilisearch. Use with `SCOUT_DRIVER=meilisearch` and `SCOUT_QUEUE=true` variables.
   enabled: false
   environment:
     MEILI_ENV: production
@@ -298,38 +357,57 @@ meilisearch:
   #   existingMasterKeySecret
 
 service:
-  type: ClusterIP
+  # -- Service type
+  type: ClusterIP  # @schema enum:[ClusterIP, LoadBalancer, NodePort, null]
+  # -- Service port
   port: 8080
+  # -- Load Balancer IP (optional, only works with service.type LoadBalancer)
   loadBalancerIP: ""
-  nodePort:
+  # -- Load Balancer Class (optional, only works with service.type LoadBalancer)
+  loadBalancerClass: ""
+  # -- Node Port (optional, only works with service.type NodePort)
+  nodePort:  # @schema type:[integer, null]
+  # -- Service annotations
   annotations: {}
     ## Insert your annotations such as below
     # test/test: pumuckel
+  # -- Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+  ## If "ClientIP", consecutive client requests will be directed to the same Pod
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+  sessionAffinity: None  # @schema enum:[ClusterIP, None]
+  # -- Additional settings for the sessionAffinity
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  sessionAffinityConfig: {}
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 ##
 persistence:
-  # monica storage (/var/www/html/storage)
+  # -- Enable Monica persistence using Persistent Volume Claims
   enabled: false
+  # -- Persistent Volume Claim annotations
   annotations: {}
-  ## monica storage Persistent Volume Storage Class
-  ## If defined, storageClassName: <storageClass>
-  ## If set to "-", storageClassName: "", which disables dynamic provisioning
-  ## If undefined (the default) or set to null, no storageClassName spec is
-  ##   set, choosing the default provisioner. (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
-  ##
-  # storageClass: "-"
+  # -- Persistent Volume Storage Class
+  # If defined, storageClassName: <storageClass>
+  # If set to "-", storageClassName: "", which disables dynamic provisioning
+  # If undefined (the default) or set to null, no storageClassName spec is
+  #   set, choosing the default provisioner. (gp2 on AWS, standard on
+  #   GKE, AWS & OpenStack)
+  storageClass: ""
 
-  ## A manually managed Persistent Volume and Claim
-  ## Requires persistence.enabled: true
-  ## If defined, PVC must be created manually before volume will be bound
-  # existingClaim:
+  # -- A manually managed Persistent Volume and Claim
+  #  Requires persistence.enabled: true
+  #  If defined, PVC must be created manually before volume will be bound
+  existingClaim: ""
 
+  # -- Persistent Volume Access Mode
   accessMode: ReadWriteOnce
+  # -- Persistent Volume Storage Request
   size: 4Gi
 
+# -- Define resources requests and limits for the pod (limits, requests)
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -347,56 +425,85 @@ resources: {}
 ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
 ##
 livenessProbe:
+  # -- Enable liveness probe
   enabled: true
+  # -- Delay before this probe is initiated
   initialDelaySeconds: 10
+  # -- How often to perform the probe
   periodSeconds: 10
+  # -- When the probe times out
   timeoutSeconds: 5
+  # -- Minimum consecutive failures for the probe
   failureThreshold: 3
+  # -- Minimum consecutive successes for the probe
   successThreshold: 1
 readinessProbe:
+  # -- Enable readiness probe
   enabled: true
+  # -- Delay before this probe is initiated
   initialDelaySeconds: 10
+  # -- How often to perform the probe
   periodSeconds: 10
+  # -- When the probe times out
   timeoutSeconds: 5
+  # -- Minimum consecutive failures for the probe
   failureThreshold: 3
+  # -- Minimum consecutive successes for the probe
   successThreshold: 1
 startupProbe:
+  # -- Enable startup probe
   enabled: false
+  # -- Delay before this probe is initiated
   initialDelaySeconds: 30
+  # -- How often to perform the probe
   periodSeconds: 10
+  # -- When the probe times out
   timeoutSeconds: 5
+  # -- Minimum consecutive failures for the probe
   failureThreshold: 30
+  # -- Minimum consecutive successes for the probe
   successThreshold: 1
 
 
 ## Enable pod autoscaling using HorizontalPodAutoscaler
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ##
-hpa:
+autoscaling:
+  # -- Enable autoscaling
   enabled: false
-  cputhreshold: 60
-  minPods: 1
-  maxPods: 10
+  # -- Minimum number of replicas to scale back
+  minReplicas:  # @schema type:[integer, null]
+  # -- Maximum number of replicas to scale out
+  maxReplicas:  # @schema type:[integer, null]
+  # -- Target CPU utilization percentage
+  targetCPU:  # @schema type:[integer, null]
+  # -- Target Memory utilization percentage
+  targetMemory:  # @schema type:[integer, null]
 
+
+# -- Node labels for pod assignment
 nodeSelector: {}
 
+# -- Tolerations for pod assignment
 tolerations: []
 
+# -- Affinity for pod assignment
 affinity: {}
 
 rbac:
-  # Specifies whether RBAC resources should be created
+  # -- Specifies whether RBAC resources should be created
   create: true
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name:
+  # -- The name of the service account to use.
+  #  If not set and create is true, a name is generated using the fullname template
+  name: ""
 
+# @ignored
 tests:
   unitTests:
     resources:

@@ -15,17 +15,20 @@ spec:
     {{- include "monica.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: app
   type: {{ .Values.service.type }}
-  {{- if (eq .Values.service.type "LoadBalancer") }}
+  {{- with .Values.service.sessionAffinity }}
+  sessionAffinity: {{ . }}
+  {{- end }}
+  {{- with .Values.service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}  
+  {{- if eq .Values.service.type "LoadBalancer" }}
   {{- with .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ . }}
   {{- end }}
+  {{- with .Values.service.loadBalancerClass }}
+  loadBalancerIP: {{ . }}
   {{- end }}
-  {{- with .Values.service.ipFamilies }}
-  ipFamilies:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- with .Values.service.ipFamilyPolicy }}
-  ipFamilyPolicy: {{ . }}
   {{- end }}
   ports:
     - port: {{ .Values.service.port }}
@@ -36,6 +39,8 @@ spec:
       {{- end }}
       protocol: TCP
       name: http
+      {{- if or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer") }}
       {{- with .Values.service.nodePort }}
       nodePort: {{ . }}
+      {{- end }}
       {{- end }}
