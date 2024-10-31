@@ -65,3 +65,9 @@ annotations:
   artifacthub.io/changes: |
     - kind: changed
       description: Update chart documentation
+    - kind: fixed
+      description: Fix resources usage
+    - kind: added
+      description: Add resources for cronjob and queue
+    - kind: changed
+      description: Renamed 'hpa' to 'autoscaling', and its child values

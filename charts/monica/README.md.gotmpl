@@ -66,30 +66,6 @@ mariadb:
   enabled: true
 ```
 
-## Cron job
-
-Monica requires a cron job to run reminders and other [scheduled](https://laravel.com/docs/11.x/scheduling) tasks. You can enable the cron job by setting the `monica.cronjob.enabled` parameters to `true` in your `values.yaml`.
-
-```yaml
-monica:
-  cronJob:
-    enabled: true
-```
-
-## Queue worker
-
-Monica works better with a [queue](https://laravel.com/docs/11.x/queues) worker. You can enable the queue worker by setting the `monica.queue.enabled` parameters to `true` in your `values.yaml`.
-You can use the `database` for `QUEUE_CONNECTION`, but other options exists.
-
-```yaml
-monica:
-  queue:
-    enabled: true
-  extraEnv:
-    - name: QUEUE_CONNECTION
-      value: database
-```
-
 ## Add environment variables
 
 To add environment variables to the monica container, set the `monica.extraEnv` parameters in your `values.yaml`.
@@ -110,6 +86,36 @@ monica:
     - name: PHP_UPLOAD_LIMIT
       value: 10G
 ```
+
+## Cron job
+
+Monica requires a cron job to run reminders and other [scheduled](https://laravel.com/docs/11.x/scheduling) tasks. You can enable the cron job by setting the `monica.cronjob.enabled` parameters to `true` in your `values.yaml`.
+
+```yaml
+monica:
+  cronJob:
+    enabled: true
+```
+
+> [!Note]
+> Cron job requires a permanent database. Using the internal SQLite database won't work in this scenario.
+
+## Queue worker
+
+Monica works better with a [queue](https://laravel.com/docs/11.x/queues) worker. You can enable the queue worker by setting the `monica.queue.enabled` parameters to `true` in your `values.yaml`.
+You can use the `database` for `QUEUE_CONNECTION`, but other options exists.
+
+```yaml
+monica:
+  queue:
+    enabled: true
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: database
+```
+
+> [!Note]
+> Queue requires a permanent database. Using the internal SQLite database won't work in this scenario.
 
 ## Using nginx
 
@@ -138,6 +144,8 @@ monica:
       error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
       display_errors = Off
 ```
+
+Note you can also set `PHP_UPLOAD_LIMIT` and `PHP_MEMORY_LIMIT` in the `monica.extraEnv` section.
 
 > [!Note]
 > Be sure to prefix your file name with `zz` to ensure it is loaded at the end.

@@ -14,7 +14,7 @@ metadata:
     {{ toYaml . | indent 4 }}
   {{- end }}
 spec:
-  {{- if not .Values.hpa.enabled }}
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   strategy:
@@ -128,13 +128,13 @@ spec:
           {{- end }}
           {{- end }}{{/* not nginx.enabled */}}
           resources:
-            {{ toYaml .Values.resources | indent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             {{- include "monica.volumeMounts" . | trim | nindent 12 }}
 
         {{- if .Values.nginx.enabled }}
         - name: {{ .Chart.Name }}-nginx
-          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          image: "{{ .Values.nginx.image.registry | default "docker.io" }}/{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           {{- with .Values.nginx.extraEnv }}
           env:
@@ -193,7 +193,7 @@ spec:
           {{- end }}
           {{- end }}
           resources:
-            {{ toYaml .Values.nginx.resources | indent 12 }}
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
           volumeMounts:
             - name: monica-nginx-config
               mountPath: /etc/nginx/conf.d/

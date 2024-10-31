@@ -51,7 +51,13 @@ Kubernetes: `>=1.16.0-0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity for pod assignment |
-| deploymentAnnotations | object | `{}` | Annotations to be added at 'service' level |
+| autoscaling.enabled | bool | `false` | Enable autoscaling |
+| autoscaling.maxReplicas | string | `nil` | Maximum number of replicas to scale out |
+| autoscaling.minReplicas | string | `nil` | Minimum number of replicas to scale back |
+| autoscaling.targetCPU | string | `nil` | Target CPU utilization percentage |
+| autoscaling.targetMemory | string | `nil` | Target Memory utilization percentage |
+| deploymentAnnotations | object | `{}` | Annotations to be added at 'deployment' level |
+| deploymentLabels | object | `{}` | Labels to be added at 'deployment' level |
 | externalDatabase.database | string | `"monica"` | Database name |
 | externalDatabase.enabled | bool | `false` | Enable external database |
 | externalDatabase.existingSecret.enabled | bool | `false` | Use an existing secret. If enabled set: `secretName`, `usernameKey`, `passwordKey` |
@@ -60,13 +66,10 @@ Kubernetes: `>=1.16.0-0`
 | externalDatabase.type | string | `"mysql"` | Database type. Supported database engines: `mysql` or `postgresql` |
 | externalDatabase.user | string | `"monica"` | Database user |
 | fullnameOverride | string | `""` | Override the fullname of the chart |
-| hpa.cputhreshold | int | `60` |  |
-| hpa.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
-| hpa.maxPods | int | `10` |  |
-| hpa.minPods | int | `1` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"ghcr.io/monicahq/monica-next"` |  |
-| image.tag | string | `"main"` |  |
+| image.pullPolicy | string | `"IfNotPresent"` | The monica image pull policy |
+| image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. |
+| image.repository | string | `"ghcr.io/monicahq/monica-next"` | The monica image repository to pull from |
+| image.tag | string | `"main"` | The monica image tag to pull |
 | ingress.annotations | object | `{}` | An array of service annotations |
 | ingress.className | string | `nil` | Name of the ingress class to use |
 | ingress.enabled | bool | `false` | Enable ingress controller resource |
@@ -77,11 +80,11 @@ Kubernetes: `>=1.16.0-0`
 | internalDatabase.name | string | `"/var/www/html/database/monica.sqlite"` | Database fullpath file |
 | lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
 | livenessProbe.enabled | bool | `true` | Enable liveness probe |
-| livenessProbe.failureThreshold | int | `3` |  |
-| livenessProbe.initialDelaySeconds | int | `10` |  |
-| livenessProbe.periodSeconds | int | `10` |  |
-| livenessProbe.successThreshold | int | `1` |  |
-| livenessProbe.timeoutSeconds | int | `5` |  |
+| livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the probe |
+| livenessProbe.initialDelaySeconds | int | `10` | Delay before this probe is initiated |
+| livenessProbe.periodSeconds | int | `10` | How often to perform the probe |
+| livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe |
+| livenessProbe.timeoutSeconds | int | `5` | When the probe times out |
 | mariadb.architecture | string | `"standalone"` | MariaDB architecture: `standalone` or `replication` |
 | mariadb.auth.database | string | `"monica"` | Database name |
 | mariadb.auth.password | string | `"secret"` | Database password |
@@ -102,6 +105,7 @@ Kubernetes: `>=1.16.0-0`
 | monica.containerPort | int | `80` | Customize container port |
 | monica.cronjob.enabled | bool | `false` | Enable cronjob to execute monica scheduled tasks |
 | monica.cronjob.lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
+| monica.cronjob.resources | object | `{}` | cronjob resources definition (limits, requests) |
 | monica.existingSecret.enabled | bool | `false` | Use an existing secret. If enabled, you need to set: `secretName`, `appKey`, `mailUsernameKey`, `mailPasswordKey` |
 | monica.extraEnv | list | `[]` | Extra environment variables |
 | monica.extraInitContainers | list | `[]` | Extra init containers that runs before pods start. |
@@ -120,6 +124,7 @@ Kubernetes: `>=1.16.0-0`
 | monica.phpConfigs | object | `{}` | PHP Configuration files. Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true |
 | monica.queue.enabled | bool | `false` | Enable queue job to execute monica background tasks. Use in addition to a `QUEUE_CONNECTION` variable. |
 | monica.queue.lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
+| monica.queue.resources | object | `{}` | queue job resources definition (limits, requests) |
 | monica.storagedir | string | `"/var/www/html/storage"` | Monica storage directory |
 | monica.strategy | object | `{"type":"Recreate"}` | Strategy used to replace old pods. IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes. ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy |
 | nameOverride | string | `""` | Add a suffix to the name of the chart |
@@ -127,9 +132,9 @@ Kubernetes: `>=1.16.0-0`
 | nginx.config.default | bool | `true` | Generates the default nginx config |
 | nginx.containerPort | int | `80` | Customize container port |
 | nginx.enabled | bool | `false` | Enable nginx. You need to set an fpm version of the image for monica if you want to use nginx. |
-| nginx.image.pullPolicy | string | `"IfNotPresent"` |  |
-| nginx.image.repository | string | `"nginx"` |  |
-| nginx.image.tag | string | `"alpine"` |  |
+| nginx.image.pullPolicy | string | `"IfNotPresent"` | The nginx image pull policy |
+| nginx.image.repository | string | `"nginx"` | The nginx image repository to pull from |
+| nginx.image.tag | string | `"alpine"` | The nginx image tag to pull |
 | nginx.resources | object | `{}` | nginx resources definition (limits, requests) |
 | nodeSelector | object | `{}` | Node labels for pod assignment |
 | persistence.accessMode | string | `"ReadWriteOnce"` | Persistent Volume Access Mode |
@@ -149,15 +154,15 @@ Kubernetes: `>=1.16.0-0`
 | postgresql.primary.persistence.storageClass | string | `nil` | Storage class of backing PVC |
 | rbac.create | bool | `true` | Specifies whether RBAC resources should be created |
 | readinessProbe.enabled | bool | `true` | Enable readiness probe |
-| readinessProbe.failureThreshold | int | `3` |  |
-| readinessProbe.initialDelaySeconds | int | `10` |  |
-| readinessProbe.periodSeconds | int | `10` |  |
-| readinessProbe.successThreshold | int | `1` |  |
-| readinessProbe.timeoutSeconds | int | `5` |  |
+| readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the probe |
+| readinessProbe.initialDelaySeconds | int | `10` | Delay before this probe is initiated |
+| readinessProbe.periodSeconds | int | `10` | How often to perform the probe |
+| readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe |
+| readinessProbe.timeoutSeconds | int | `5` | When the probe times out |
 | redis.auth.enabled | bool | `true` | Enable redis authentication |
 | redis.auth.password | string | `"secret"` | Redis password |
 | redis.enabled | bool | `false` | Enable Redis. Use with a `QUEUE_CONNECTION=redis` variable (can also be used for `CACHE_STORE` and `SESSION_DRIVER`). |
-| replicaCount | int | `1` | Number of replicas to be deployed |
+| replicaCount | int | `1` | Number of pods to be deployed |
 | resources | object | `{}` | Define resources requests and limits for the pod (limits, requests) |
 | service.annotations | object | `{}` | Service annotations |
 | service.loadBalancerIP | string | `""` | Load Balancer IP (optional, only works with service.type LoadBalancer) |
@@ -168,11 +173,11 @@ Kubernetes: `>=1.16.0-0`
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use.  If not set and create is true, a name is generated using the fullname template |
 | startupProbe.enabled | bool | `false` | Enable startup probe |
-| startupProbe.failureThreshold | int | `30` |  |
-| startupProbe.initialDelaySeconds | int | `30` |  |
-| startupProbe.periodSeconds | int | `10` |  |
-| startupProbe.successThreshold | int | `1` |  |
-| startupProbe.timeoutSeconds | int | `5` |  |
+| startupProbe.failureThreshold | int | `30` | Minimum consecutive failures for the probe |
+| startupProbe.initialDelaySeconds | int | `30` | Delay before this probe is initiated |
+| startupProbe.periodSeconds | int | `10` | How often to perform the probe |
+| startupProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe |
+| startupProbe.timeoutSeconds | int | `5` | When the probe times out |
 | tolerations | list | `[]` | Tolerations for pod assignment |
 
 ## Database
@@ -207,30 +212,6 @@ mariadb:
   enabled: true
 ```
 
-## Cron job
-
-Monica requires a cron job to run reminders and other [scheduled](https://laravel.com/docs/11.x/scheduling) tasks. You can enable the cron job by setting the `monica.cronjob.enabled` parameters to `true` in your `values.yaml`.
-
-```yaml
-monica:
-  cronJob:
-    enabled: true
-```
-
-## Queue worker
-
-Monica works better with a [queue](https://laravel.com/docs/11.x/queues) worker. You can enable the queue worker by setting the `monica.queue.enabled` parameters to `true` in your `values.yaml`.
-You can use the `database` for `QUEUE_CONNECTION`, but other options exists.
-
-```yaml
-monica:
-  queue:
-    enabled: true
-  extraEnv:
-    - name: QUEUE_CONNECTION
-      value: database
-```
-
 ## Add environment variables
 
 To add environment variables to the monica container, set the `monica.extraEnv` parameters in your `values.yaml`.
@@ -251,6 +232,36 @@ monica:
     - name: PHP_UPLOAD_LIMIT
       value: 10G
 ```
+
+## Cron job
+
+Monica requires a cron job to run reminders and other [scheduled](https://laravel.com/docs/11.x/scheduling) tasks. You can enable the cron job by setting the `monica.cronjob.enabled` parameters to `true` in your `values.yaml`.
+
+```yaml
+monica:
+  cronJob:
+    enabled: true
+```
+
+> [!Note]
+> Cron job requires a permanent database. Using the internal SQLite database won't work in this scenario.
+
+## Queue worker
+
+Monica works better with a [queue](https://laravel.com/docs/11.x/queues) worker. You can enable the queue worker by setting the `monica.queue.enabled` parameters to `true` in your `values.yaml`.
+You can use the `database` for `QUEUE_CONNECTION`, but other options exists.
+
+```yaml
+monica:
+  queue:
+    enabled: true
+  extraEnv:
+    - name: QUEUE_CONNECTION
+      value: database
+```
+
+> [!Note]
+> Queue requires a permanent database. Using the internal SQLite database won't work in this scenario.
 
 ## Using nginx
 
@@ -279,6 +290,8 @@ monica:
       error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
       display_errors = Off
 ```
+
+Note you can also set `PHP_UPLOAD_LIMIT` and `PHP_MEMORY_LIMIT` in the `monica.extraEnv` section.
 
 > [!Note]
 > Be sure to prefix your file name with `zz` to ensure it is loaded at the end.

@@ -55,7 +55,8 @@ server {
 
     # set max upload size
     client_max_body_size 10G;
-    fastcgi_buffers 64 4K;
+    fastcgi_buffers 64 8K;
+    fastcgi_buffer_size 32k;
 
     # Enable gzip but do not remove ETag headers
     gzip on;
