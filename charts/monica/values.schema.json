@@ -602,6 +602,7 @@
           "enum": [
             "ClusterIP",
             "LoadBalancer",
+            "NodePort",
             null
           ],
           "type": "string"

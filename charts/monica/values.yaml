@@ -1,8 +1,8 @@
 image:
   # -- The monica image repository to pull from
-  repository: ghcr.io/monicahq/monica-next # @schema required:true
+  repository: ghcr.io/monicahq/monica-next  # @schema required:true
   # -- The monica image tag to pull
-  tag: main # @schema required:true
+  tag: main  # @schema required:true
   # repository: monica
   # tag: 5.0-apache
   # -- The monica image pull policy
@@ -358,7 +358,7 @@ meilisearch:
 
 service:
   # -- Service type
-  type: ClusterIP # @schema enum:[ClusterIP, LoadBalancer, null]
+  type: ClusterIP  # @schema enum:[ClusterIP, LoadBalancer, NodePort, null]
   # -- Service port
   port: 8080
   # -- Load Balancer IP (optional, only works with service.type LoadBalancer)
@@ -366,7 +366,7 @@ service:
   # -- Load Balancer Class (optional, only works with service.type LoadBalancer)
   loadBalancerClass: ""
   # -- Node Port (optional, only works with service.type NodePort)
-  nodePort: # @schema type:[integer, null]
+  nodePort:  # @schema type:[integer, null]
   # -- Service annotations
   annotations: {}
     ## Insert your annotations such as below
@@ -374,7 +374,7 @@ service:
   # -- Session Affinity for Kubernetes service, can be "None" or "ClientIP"
   ## If "ClientIP", consecutive client requests will be directed to the same Pod
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
-  sessionAffinity: None # @schema enum:[ClusterIP, None]
+  sessionAffinity: None  # @schema enum:[ClusterIP, None]
   # -- Additional settings for the sessionAffinity
   ## sessionAffinityConfig:
   ##   clientIP:
@@ -472,13 +472,13 @@ autoscaling:
   # -- Enable autoscaling
   enabled: false
   # -- Minimum number of replicas to scale back
-  minReplicas: # @schema type:[integer, null]
+  minReplicas:  # @schema type:[integer, null]
   # -- Maximum number of replicas to scale out
-  maxReplicas: # @schema type:[integer, null]
+  maxReplicas:  # @schema type:[integer, null]
   # -- Target CPU utilization percentage
-  targetCPU: # @schema type:[integer, null]
+  targetCPU:  # @schema type:[integer, null]
   # -- Target Memory utilization percentage
-  targetMemory: # @schema type:[integer, null]
+  targetMemory:  # @schema type:[integer, null]
 
 
 # -- Node labels for pod assignment
