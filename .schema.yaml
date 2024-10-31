@@ -1,0 +1,11 @@
+# Required
+input:
+  - charts/monica/values.yaml
+
+indent: 2
+output: charts/monica/values.schema.json
+
+schemaRoot:
+  id: https://example.com/schema
+  title: Monica Helm Charts Values Schema
+  description: Schema for Helm values

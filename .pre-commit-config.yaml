@@ -3,3 +3,9 @@ repos:
     rev: v1.14.2
     hooks:
       - id: helm-docs
+
+  - repo: https://github.com/losisin/helm-values-schema-json
+    rev: v1.6.1
+    hooks:
+      - id: helm-schema
+        args: ["-input", "charts/monica/values.yaml", "-output", "charts/monica/values.schema.json", "-indent", "2"]
