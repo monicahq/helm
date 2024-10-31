@@ -298,7 +298,7 @@ postgresql:
         username: monica
         # -- Database password
         password: secret
-        
+
   primary:
     persistence:
       # -- Enable PostgreSQL persistence using Persistent Volume Claims
