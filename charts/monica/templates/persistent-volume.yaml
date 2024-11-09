@@ -10,7 +10,7 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
     {{- with .Values.persistence.annotations }}
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   accessModes:

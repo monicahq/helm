@@ -57,7 +57,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- include "monica.env" . | indent 12 }}
+            {{- include "monica.env" . | nindent 12 }}
           resources:
             {{- toYaml .Values.monica.queue.resources | nindent 12 }}
           volumeMounts:

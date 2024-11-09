@@ -124,6 +124,9 @@
         },
         "pathType": {
           "type": "string"
+        },
+        "tls": {
+          "type": "array"
         }
       },
       "type": "object"
@@ -238,6 +241,12 @@
           "properties": {
             "enabled": {
               "type": "boolean"
+            },
+            "existingSecret": {
+              "type": "string"
+            },
+            "existingSecretPasswordKey": {
+              "type": "string"
             },
             "password": {
               "type": "string"
@@ -547,6 +556,12 @@
             "enabled": {
               "type": "boolean"
             },
+            "existingSecret": {
+              "type": "string"
+            },
+            "existingSecretPasswordKey": {
+              "type": "string"
+            },
             "password": {
               "type": "string"
             }
@@ -555,6 +570,40 @@
         },
         "enabled": {
           "type": "boolean"
+        },
+        "global": {
+          "properties": {
+            "storageClass": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "master": {
+          "properties": {
+            "persistence": {
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "replica": {
+          "properties": {
+            "persistence": {
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
         }
       },
       "type": "object"

@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.12
+version: 1.0.13
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
@@ -54,6 +54,7 @@ annotations:
       image: ghcr.io/monicahq/monica-next:main
       platforms:
         - linux/amd64
+        - linux/arm64
   artifacthub.io/license: AGPL-3.0
   artifacthub.io/links: |
     - name: Helm Charts Source
@@ -63,11 +64,7 @@ annotations:
     - name: Source Code
       url: https://github.com/monicahq/monica
   artifacthub.io/changes: |
-    - kind: changed
-      description: Update chart documentation
-    - kind: fixed
-      description: Fix resources usage
-    - kind: added
-      description: Add resources for cronjob and queue
-    - kind: changed
-      description: Renamed 'hpa' to 'autoscaling', and its child values
+    - kind: changes
+      description: Activate redis storage by default
+    - kind: fix
+      description: Fix annotations

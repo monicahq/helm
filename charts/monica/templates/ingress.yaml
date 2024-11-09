@@ -8,11 +8,11 @@ metadata:
     {{- include "monica.labels" . | nindent 4 }}
     app.kubernetes.io/component: app
     {{- with .Values.ingress.labels }}
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- with .Values.ingress.annotations }}
   annotations:
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   {{- with .Values.ingress.className }}
@@ -40,6 +40,6 @@ spec:
               {{- end }}
   {{- with .Values.ingress.tls }}
   tls:
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 {{- end }}
