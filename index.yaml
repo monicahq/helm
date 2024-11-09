@@ -3,6 +3,80 @@ entries:
   monica:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changes
+          description: Activate redis storage by default
+        - kind: fix
+          description: Fix annotations
+      artifacthub.io/images: |
+        - name: monica-next
+          image: ghcr.io/monicahq/monica-next:main
+          platforms:
+            - linux/amd64
+            - linux/arm64
+      artifacthub.io/license: AGPL-3.0
+      artifacthub.io/links: |
+        - name: Helm Charts Source
+          url: https://github.com/monicahq/helm
+        - name: Website
+          url: https://www.monicahq.com/
+        - name: Source Code
+          url: https://github.com/monicahq/monica
+      artifacthub.io/maintainers: |
+        - name: asbiin
+          email: alexis@saettler.org
+      artifacthub.io/screenshots: |
+        - title: Document your life
+          url: https://user-images.githubusercontent.com/61099/242266547-63d98bd9-35f3-4dfe-92f4-a4a8dd75aa5c.png
+      artifacthub.io/signKey: |
+        fingerprint: AFE991E31648AE825AD37DDF932D00A7AEEA553D
+        url: https://monicahq.github.io/helm/public-key.asc
+    apiVersion: v2
+    appVersion: 5.0.0
+    created: "2024-11-09T10:40:53.13803073Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 16.0.*
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.*
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.2.*
+    - condition: memcached.enabled
+      name: memcached
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 7.5.*
+    - condition: meilisearch.enabled
+      name: meilisearch
+      repository: https://meilisearch.github.io/meilisearch-kubernetes
+      version: 0.10.*
+    description: A Helm chart for Kubernetes to install Monica
+    digest: afb086887c8745c2bafb57d89ff7ae0e5d8dfaf2161cb417d732ad9c791e3f04
+    icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
+    keywords:
+    - crm
+    - prm
+    - social
+    - laravel
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: MonicaHQ
+      url: https://github.com/monicahq/monica
+    - email: alexis@saettler.org
+      name: asbiin
+    name: monica
+    sources:
+    - https://github.com/monicahq/helm
+    type: application
+    urls:
+    - https://github.com/monicahq/helm/releases/download/monica-1.0.13/monica-1.0.13.tgz
+    version: 1.0.13
+  - annotations:
+      artifacthub.io/changes: |
         - kind: changed
           description: Update chart documentation
         - kind: fixed
@@ -572,4 +646,4 @@ entries:
     urls:
     - https://github.com/monicahq/helm/releases/download/monica-1.0.1/monica-1.0.1.tgz
     version: 1.0.1
-generated: "2024-10-31T10:05:45.491803214Z"
+generated: "2024-11-09T10:40:53.138120317Z"
