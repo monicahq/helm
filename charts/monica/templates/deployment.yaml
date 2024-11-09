@@ -7,18 +7,18 @@ metadata:
     {{- include "monica.labels" . | nindent 4 }}
     app.kubernetes.io/component: app
     {{- with .Values.deploymentLabels }}
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- with .Values.deploymentAnnotations }}
   annotations:
-    {{ toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   strategy:
-    {{ toYaml .Values.monica.strategy | indent 4 }}
+    {{- toYaml .Values.monica.strategy | nindent 4 }}
   selector:
     matchLabels:
       {{- include "monica.selectorLabels" . | nindent 6 }}
@@ -35,7 +35,7 @@ spec:
         {{ template "monica.memcached.fullname" . }}-client: "true"
         {{- end }}        
         {{- with .Values.podLabels }}
-        {{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
         php-config-hash: {{ toJson .Values.monica.phpConfigs | sha256sum }}
@@ -43,7 +43,7 @@ spec:
         nginx-config-hash: {{ print .Values.nginx.config.default "-" .Values.nginx.config.custom | sha256sum }}
         {{- end }}      
         {{- with .Values.podAnnotations }}
-        {{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.image.pullSecrets }}
@@ -72,7 +72,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- include "monica.env" . | indent 12 }}
+            {{- include "monica.env" . | nindent 12 }}
           {{- if not .Values.nginx.enabled }}
           ports:
             - name: http
@@ -207,7 +207,7 @@ spec:
               mountPath: {{ .Values.monica.storagedir }}
             {{- end }}
             {{- with .Values.monica.extraVolumeMounts }}
-            {{ toYaml . | indent 12 }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
         {{- end }}{{/* nginx.enabled */}}
 

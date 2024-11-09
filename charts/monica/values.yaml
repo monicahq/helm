@@ -35,32 +35,33 @@ ingress:
   enabled: false
   # -- Name of the ingress class to use
   className: ""
-  # -- An array of service annotations
+  # -- Ingress service annotations
   annotations: {}
-  #  nginx.ingress.kubernetes.io/proxy-body-size: 4G
-  #  kubernetes.io/tls-acme: "true"
-  #  cert-manager.io/cluster-issuer: letsencrypt-prod
-  #  nginx.ingress.kubernetes.io/server-snippet: |-
-  #    server_tokens off;
-  #    proxy_hide_header X-Powered-By;
-  #    location = /.well-known/carddav {
-  #      return 301 $scheme://$host/dav;
-  #    }
-  #    location = /.well-known/caldav {
-  #      return 301 $scheme://$host/dav;
-  #    }
-  #    location = /.well-known/security.txt {
-  #      return 301 $scheme://$host/security.txt;
-  #    }
-  #    location = /robots.txt {
-  #      allow all;
-  #      log_not_found off;
-  #      access_log off;
-  #    }
-  #  tls:
-  #    - secretName: monica-tls
-  #      hosts:
-  #        - monica.kube.home
+    # nginx.ingress.kubernetes.io/proxy-body-size: 4G
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # nginx.ingress.kubernetes.io/server-snippet: |-
+    #   server_tokens off;
+    #   proxy_hide_header X-Powered-By;
+    #   location = /.well-known/carddav {
+    #     return 301 $scheme://$host/dav;
+    #   }
+    #   location = /.well-known/caldav {
+    #     return 301 $scheme://$host/dav;
+    #   }
+    #   location = /.well-known/security.txt {
+    #     return 301 $scheme://$host/security.txt;
+    #   }
+    #   location = /robots.txt {
+    #     allow all;
+    #     log_not_found off;
+    #     access_log off;
+    #   }
+  # -- Ingress TLS configuration
+  tls: []
+    # - secretName: monica-tls
+    #   hosts:
+    #     - monica.kube.home
   # -- An array of service labels
   labels: {}
   # -- The Path to use in Ingress' paths
@@ -320,8 +321,21 @@ redis:
     enabled: true
     # -- Redis password
     password: secret
-    # existingSecret:
-    # existingSecretPasswordKey:
+    # -- Name of an existing secret with Redis credentials (instead of auth.password), must be created ahead of time
+    existingSecret: ""
+    # -- Password key to be retrieved from existing secret
+    existingSecretPasswordKey: ""
+  global:
+    # -- Storage class of backing PVC for Redis
+    storageClass: ""
+  # @ignored
+  master:
+    persistence:
+      enabled: true
+  # @ignored
+  replica:
+    persistence:
+      enabled: true
 
 ##
 ## Memcached chart configuration
@@ -337,8 +351,10 @@ memcached:
     username: monica
     # -- Memcached password
     password: secret
-    # existingSecret:
-    # existingSecretPasswordKey:
+    # -- Name of an existing secret with Memcached credentials (instead of auth.password), must be created ahead of time
+    existingSecret: ""
+    # -- Password key to be retrieved from existing secret
+    existingSecretPasswordKey: ""
   containerSecurityContext:
     # @ignored
     readOnlyRootFilesystem: false

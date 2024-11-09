@@ -32,7 +32,7 @@ spec:
                 - -c
                 - php /var/www/html/artisan schedule:run -v
               env:
-                {{- include "monica.env" . | indent 16 }}
+                {{- include "monica.env" . | nindent 16 }}
               resources:
                 {{- toYaml .Values.monica.cronjob.resources | nindent 16 }}
               volumeMounts:

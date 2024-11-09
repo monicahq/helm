@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.12](https://img.shields.io/badge/Version-1.0.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.13](https://img.shields.io/badge/Version-1.0.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -70,12 +70,13 @@ Kubernetes: `>=1.16.0-0`
 | image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. |
 | image.repository | string | `"ghcr.io/monicahq/monica-next"` | The monica image repository to pull from |
 | image.tag | string | `"main"` | The monica image tag to pull |
-| ingress.annotations | object | `{}` | An array of service annotations |
+| ingress.annotations | object | `{}` | Ingress service annotations |
 | ingress.className | string | `""` | Name of the ingress class to use |
 | ingress.enabled | bool | `false` | Enable ingress controller resource |
 | ingress.labels | object | `{}` | An array of service labels |
 | ingress.path | string | `"/"` | The Path to use in Ingress' paths |
 | ingress.pathType | string | `"Prefix"` | The PathType to use in Ingress' paths |
+| ingress.tls | list | `[]` | Ingress TLS configuration |
 | internalDatabase.enabled | bool | `true` | Enable internal (SQLite) database |
 | internalDatabase.name | string | `"/var/www/html/database/monica.sqlite"` | Database fullpath file |
 | lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
@@ -98,6 +99,8 @@ Kubernetes: `>=1.16.0-0`
 | meilisearch.enabled | bool | `false` | Enable Meilisearch. Use with `SCOUT_DRIVER=meilisearch` and `SCOUT_QUEUE=true` variables. |
 | meilisearch.environment.MEILI_ENV | string | `"production"` |  |
 | memcached.auth.enabled | bool | `true` | Enable memcached authentication |
+| memcached.auth.existingSecret | string | `""` | Name of an existing secret with Memcached credentials (instead of auth.password), must be created ahead of time |
+| memcached.auth.existingSecretPasswordKey | string | `""` | Password key to be retrieved from existing secret |
 | memcached.auth.password | string | `"secret"` | Memcached password |
 | memcached.auth.username | string | `"monica"` | Memcached user |
 | memcached.containerSecurityContext | object | `{}` |  |
@@ -159,8 +162,11 @@ Kubernetes: `>=1.16.0-0`
 | readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the probe |
 | readinessProbe.timeoutSeconds | int | `5` | When the probe times out |
 | redis.auth.enabled | bool | `true` | Enable redis authentication |
+| redis.auth.existingSecret | string | `""` | Name of an existing secret with Redis credentials (instead of auth.password), must be created ahead of time |
+| redis.auth.existingSecretPasswordKey | string | `""` | Password key to be retrieved from existing secret |
 | redis.auth.password | string | `"secret"` | Redis password |
 | redis.enabled | bool | `false` | Enable Redis. Use with a `QUEUE_CONNECTION=redis` variable (can also be used for `CACHE_STORE` and `SESSION_DRIVER`). |
+| redis.global.storageClass | string | `""` | Storage class of backing PVC for Redis |
 | replicaCount | int | `1` | Number of pods to be deployed |
 | resources | object | `{}` | Define resources requests and limits for the pod (limits, requests) |
 | service.annotations | object | `{}` | Service annotations |

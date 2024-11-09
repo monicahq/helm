@@ -1,9 +1,5 @@
 redis:
   enabled: true
-  architecture: standalone
-  master:
-    persistence:
-      enabled: false
 
 internalDatabase:
   enabled: false
