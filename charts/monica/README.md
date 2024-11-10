@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.13](https://img.shields.io/badge/Version-1.0.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.14](https://img.shields.io/badge/Version-1.0.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -106,7 +106,9 @@ Kubernetes: `>=1.16.0-0`
 | memcached.containerSecurityContext | object | `{}` |  |
 | memcached.enabled | bool | `false` | Enable Memcached. Use with a `CACHE_STORE=memcached` variable (can also be used for `SESSION_DRIVER`). |
 | monica.containerPort | int | `80` | Customize container port |
+| monica.cronjob.annotations | object | `{}` | Cronjob annotations |
 | monica.cronjob.enabled | bool | `false` | Enable cronjob to execute monica scheduled tasks |
+| monica.cronjob.labels | object | `{}` | Cronjob labels |
 | monica.cronjob.resources | object | `{}` | cronjob resources definition (limits, requests) |
 | monica.existingSecret.enabled | bool | `false` | Use an existing secret. If enabled, you need to set: `secretName`, `appKey`, `mailUsernameKey`, `mailPasswordKey` |
 | monica.extraEnv | list | `[]` | Extra environment variables |
@@ -124,9 +126,11 @@ Kubernetes: `>=1.16.0-0`
 | monica.mail.smtp.port | int | `465` | SMTP port |
 | monica.mail.smtp.username | string | `"user"` | SMTP username |
 | monica.phpConfigs | object | `{}` | PHP Configuration files. Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true |
+| monica.queue.annotations | object | `{}` | Queue job annotations |
 | monica.queue.enabled | bool | `false` | Enable queue job to execute monica background tasks. Use in addition to a `QUEUE_CONNECTION` variable. |
+| monica.queue.labels | object | `{}` | Queue job labels |
 | monica.queue.lifecycle | object | `{}` | Allow configuration of lifecycle hooks. ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/ |
-| monica.queue.resources | object | `{}` | queue job resources definition (limits, requests) |
+| monica.queue.resources | object | `{}` | Queue job resources definition (limits, requests) |
 | monica.storagedir | string | `"/var/www/html/storage"` | Monica storage directory |
 | monica.strategy | object | `{"type":"Recreate"}` | Strategy used to replace old pods. IMPORTANT: use with care, it is suggested to leave as that for upgrade purposes. ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy |
 | nameOverride | string | `""` | Add a suffix to the name of the chart |

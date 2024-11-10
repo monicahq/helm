@@ -278,8 +278,16 @@
         },
         "cronjob": {
           "properties": {
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
             "enabled": {
               "type": "boolean"
+            },
+            "labels": {
+              "properties": {},
+              "type": "object"
             },
             "resources": {
               "properties": {},
@@ -354,8 +362,16 @@
         },
         "queue": {
           "properties": {
+            "annotations": {
+              "properties": {},
+              "type": "object"
+            },
             "enabled": {
               "type": "boolean"
+            },
+            "labels": {
+              "properties": {},
+              "type": "object"
             },
             "lifecycle": {
               "properties": {},
