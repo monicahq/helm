@@ -16,9 +16,15 @@ metadata:
   labels:
     {{- include "monica.labels" . | nindent 4 }}
     app.kubernetes.io/component: queue
+    {{- with .Values.monica.queue.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   annotations:
     helm.sh/hook: post-install,post-upgrade,post-rollback
     helm.sh/hook-weight: "10"
+    {{- with .Values.monica.queue.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   selector:
     matchLabels:

@@ -164,7 +164,10 @@ monica:
   cronjob:
     # -- Enable cronjob to execute monica scheduled tasks
     enabled: false
-
+    # -- Cronjob labels
+    labels: {}
+    # -- Cronjob annotations
+    annotations: {}
     # -- cronjob resources definition (limits, requests)
     resources: {}
 
@@ -182,7 +185,11 @@ monica:
       # postStartCommand: []
       # preStopCommand: []
 
-    # -- queue job resources definition (limits, requests)
+    # -- Queue job labels
+    labels: {}
+    # -- Queue job annotations
+    annotations: {}
+    # -- Queue job resources definition (limits, requests)
     resources: {}
 
     # @ignored
