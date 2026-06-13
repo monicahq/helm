@@ -240,7 +240,7 @@ Create environment variables used to configure the monica container as well as t
 {{- end }}
 {{- end }}
 {{- if .Values.meilisearch.enabled }}
-- name: MEILISEARCH_HOST
+- name: MEILISEARCH_URL
   value: http://{{ template "monica.meilisearch.fullname" . }}:7700
 - name: MEILISEARCH_KEY
   valueFrom:

@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.14](https://img.shields.io/badge/Version-1.0.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.15](https://img.shields.io/badge/Version-1.0.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -40,11 +40,11 @@ Kubernetes: `>=1.16.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://meilisearch.github.io/meilisearch-kubernetes | meilisearch | 0.10.* |
-| oci://registry-1.docker.io/bitnamicharts | mariadb | 19.1.* |
-| oci://registry-1.docker.io/bitnamicharts | memcached | 7.5.* |
-| oci://registry-1.docker.io/bitnamicharts | postgresql | 16.0.* |
-| oci://registry-1.docker.io/bitnamicharts | redis | 20.2.* |
+| https://meilisearch.github.io/meilisearch-kubernetes | meilisearch | 0.32.* |
+| oci://registry-1.docker.io/bitnamicharts | mariadb | 23.0.* |
+| oci://registry-1.docker.io/bitnamicharts | memcached | 8.0.* |
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 17.1.* |
+| oci://registry-1.docker.io/bitnamicharts | redis | 23.1.* |
 
 ## Values
 
