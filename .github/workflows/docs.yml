@@ -42,7 +42,7 @@ jobs:
           version: ${{ env.helm }}
 
       - name: Generate schema file
-        uses: losisin/helm-values-schema-json-action@v1
+        uses: losisin/helm-values-schema-json-action@v3
         with:
           input: charts/monica/values.yaml
           output: charts/monica/values.schema.json
