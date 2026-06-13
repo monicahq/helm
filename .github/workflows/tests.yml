@@ -22,7 +22,7 @@ jobs:
         with:
           version: ${{ env.helm }}
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.python-version }}
 
@@ -79,7 +79,7 @@ jobs:
         with:
           version: ${{ env.helm }}
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.python-version }}
 
