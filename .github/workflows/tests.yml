@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubectl: [v1.16.0, v1.29.3]
+        kubectl: [v1.16.0, v1.29.3, v1.35.5]
         test_cases:
           - name: Default - no custom values
 

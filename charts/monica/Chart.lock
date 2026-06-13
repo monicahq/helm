@@ -1,18 +1,18 @@
 dependencies:
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 16.0.3
+  version: 18.7.3
 - name: mariadb
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.0
+  version: 26.1.3
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 20.2.1
+  version: 27.0.8
 - name: memcached
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 7.5.1
+  version: 8.6.1
 - name: meilisearch
   repository: https://meilisearch.github.io/meilisearch-kubernetes
-  version: 0.10.1
-digest: sha256:3fb70271b7f30bc1a3072252b987b1941e768d3eb7bc26aefd0e18c9eaf7b841
-generated: "2024-10-19T23:24:58.299202579+02:00"
+  version: 0.32.0
+digest: sha256:a9a8b0a1aa4d4c7c03346cc5564ae7682859c61514b960587789bde7aed8034f
+generated: "2026-06-13T17:30:32.547663791+02:00"

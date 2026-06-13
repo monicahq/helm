@@ -1,14 +1,15 @@
 {
-  "$id": "https://monicahq.github.io/helm/schema",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": true,
+  "$id": "https://monicahq.github.io/helm/schema",
+  "title": "Monica Helm Charts Values Schema",
   "description": "Schema for Helm values",
+  "type": "object",
   "properties": {
     "affinity": {
-      "properties": {},
       "type": "object"
     },
     "autoscaling": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -37,18 +38,16 @@
             "null"
           ]
         }
-      },
-      "type": "object"
+      }
     },
     "deploymentAnnotations": {
-      "properties": {},
       "type": "object"
     },
     "deploymentLabels": {
-      "properties": {},
       "type": "object"
     },
     "externalDatabase": {
+      "type": "object",
       "properties": {
         "database": {
           "type": "string"
@@ -57,12 +56,12 @@
           "type": "boolean"
         },
         "existingSecret": {
+          "type": "object",
           "properties": {
             "enabled": {
               "type": "boolean"
             }
-          },
-          "type": "object"
+          }
         },
         "host": {
           "type": "string"
@@ -76,13 +75,17 @@
         "user": {
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "fullnameOverride": {
       "type": "string"
     },
     "image": {
+      "type": "object",
+      "required": [
+        "repository",
+        "tag"
+      ],
       "properties": {
         "pullPolicy": {
           "type": "string"
@@ -96,17 +99,12 @@
         "tag": {
           "type": "string"
         }
-      },
-      "required": [
-        "repository",
-        "tag"
-      ],
-      "type": "object"
+      }
     },
     "ingress": {
+      "type": "object",
       "properties": {
         "annotations": {
-          "properties": {},
           "type": "object"
         },
         "className": {
@@ -116,7 +114,6 @@
           "type": "boolean"
         },
         "labels": {
-          "properties": {},
           "type": "object"
         },
         "path": {
@@ -128,10 +125,10 @@
         "tls": {
           "type": "array"
         }
-      },
-      "type": "object"
+      }
     },
     "internalDatabase": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -139,14 +136,13 @@
         "name": {
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "lifecycle": {
-      "properties": {},
       "type": "object"
     },
     "livenessProbe": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -166,15 +162,16 @@
         "timeoutSeconds": {
           "type": "integer"
         }
-      },
-      "type": "object"
+      }
     },
     "mariadb": {
+      "type": "object",
       "properties": {
         "architecture": {
           "type": "string"
         },
         "auth": {
+          "type": "object",
           "properties": {
             "database": {
               "type": "string"
@@ -185,15 +182,16 @@
             "username": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "enabled": {
           "type": "boolean"
         },
         "primary": {
+          "type": "object",
           "properties": {
             "persistence": {
+              "type": "object",
               "properties": {
                 "accessMode": {
                   "type": "string"
@@ -210,34 +208,33 @@
                 "storageClass": {
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "meilisearch": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
         },
         "environment": {
+          "type": "object",
           "properties": {
             "MEILI_ENV": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "memcached": {
+      "type": "object",
       "properties": {
         "auth": {
+          "type": "object",
           "properties": {
             "enabled": {
               "type": "boolean"
@@ -254,55 +251,51 @@
             "username": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "containerSecurityContext": {
+          "type": "object",
           "properties": {
             "readOnlyRootFilesystem": {
               "type": "boolean"
             }
-          },
-          "type": "object"
+          }
         },
         "enabled": {
           "type": "boolean"
         }
-      },
-      "type": "object"
+      }
     },
     "monica": {
+      "type": "object",
       "properties": {
         "containerPort": {
           "type": "integer"
         },
         "cronjob": {
+          "type": "object",
           "properties": {
             "annotations": {
-              "properties": {},
               "type": "object"
             },
             "enabled": {
               "type": "boolean"
             },
             "labels": {
-              "properties": {},
               "type": "object"
             },
             "resources": {
-              "properties": {},
               "type": "object"
             }
-          },
-          "type": "object"
+          }
         },
         "existingSecret": {
+          "type": "object",
           "properties": {
             "enabled": {
               "type": "boolean"
             }
-          },
-          "type": "object"
+          }
         },
         "extraEnv": {
           "type": "array"
@@ -323,6 +316,7 @@
           "type": "string"
         },
         "mail": {
+          "type": "object",
           "properties": {
             "enabled": {
               "type": "boolean"
@@ -334,6 +328,7 @@
               "type": "string"
             },
             "smtp": {
+              "type": "object",
               "properties": {
                 "encryption": {
                   "type": "string"
@@ -350,66 +345,60 @@
                 "username": {
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "phpConfigs": {
-          "properties": {},
           "type": "object"
         },
         "queue": {
+          "type": "object",
           "properties": {
             "annotations": {
-              "properties": {},
               "type": "object"
             },
             "enabled": {
               "type": "boolean"
             },
             "labels": {
-              "properties": {},
               "type": "object"
             },
             "lifecycle": {
-              "properties": {},
               "type": "object"
             },
             "priorityClassName": {
               "type": "string"
             },
             "resources": {
-              "properties": {},
               "type": "object"
             },
             "terminationGracePeriodSeconds": {
               "type": "integer"
             }
-          },
-          "type": "object"
+          }
         },
         "storagedir": {
           "type": "string"
         },
         "strategy": {
+          "type": "object",
           "properties": {
             "type": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "nameOverride": {
       "type": "string"
     },
     "nginx": {
+      "type": "object",
       "properties": {
         "config": {
+          "type": "object",
           "properties": {
             "custom": {
               "type": "string"
@@ -417,8 +406,7 @@
             "default": {
               "type": "boolean"
             }
-          },
-          "type": "object"
+          }
         },
         "containerPort": {
           "type": "integer"
@@ -427,6 +415,7 @@
           "type": "boolean"
         },
         "image": {
+          "type": "object",
           "properties": {
             "pullPolicy": {
               "type": "string"
@@ -437,27 +426,23 @@
             "tag": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "resources": {
-          "properties": {},
           "type": "object"
         }
-      },
-      "type": "object"
+      }
     },
     "nodeSelector": {
-      "properties": {},
       "type": "object"
     },
     "persistence": {
+      "type": "object",
       "properties": {
         "accessMode": {
           "type": "string"
         },
         "annotations": {
-          "properties": {},
           "type": "object"
         },
         "enabled": {
@@ -472,27 +457,28 @@
         "storageClass": {
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "podAnnotations": {
-      "properties": {},
       "type": "object"
     },
     "podLabels": {
-      "properties": {},
       "type": "object"
     },
     "postgresql": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
         },
         "global": {
+          "type": "object",
           "properties": {
             "postgresql": {
+              "type": "object",
               "properties": {
                 "auth": {
+                  "type": "object",
                   "properties": {
                     "database": {
                       "type": "string"
@@ -503,18 +489,17 @@
                     "username": {
                       "type": "string"
                     }
-                  },
-                  "type": "object"
+                  }
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "primary": {
+          "type": "object",
           "properties": {
             "persistence": {
+              "type": "object",
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -525,24 +510,22 @@
                 "storageClass": {
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "rbac": {
+      "type": "object",
       "properties": {
         "create": {
           "type": "boolean"
         }
-      },
-      "type": "object"
+      }
     },
     "readinessProbe": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -562,12 +545,13 @@
         "timeoutSeconds": {
           "type": "integer"
         }
-      },
-      "type": "object"
+      }
     },
     "redis": {
+      "type": "object",
       "properties": {
         "auth": {
+          "type": "object",
           "properties": {
             "enabled": {
               "type": "boolean"
@@ -581,60 +565,57 @@
             "password": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "enabled": {
           "type": "boolean"
         },
         "global": {
+          "type": "object",
           "properties": {
             "storageClass": {
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "master": {
+          "type": "object",
           "properties": {
             "persistence": {
+              "type": "object",
               "properties": {
                 "enabled": {
                   "type": "boolean"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "replica": {
+          "type": "object",
           "properties": {
             "persistence": {
+              "type": "object",
               "properties": {
                 "enabled": {
                   "type": "boolean"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "replicaCount": {
       "type": "integer"
     },
     "resources": {
-      "properties": {},
       "type": "object"
     },
     "service": {
+      "type": "object",
       "properties": {
         "annotations": {
-          "properties": {},
           "type": "object"
         },
         "loadBalancerClass": {
@@ -653,32 +634,30 @@
           "type": "integer"
         },
         "sessionAffinity": {
+          "type": "string",
           "enum": [
             "ClusterIP",
             "None"
-          ],
-          "type": "string"
+          ]
         },
         "sessionAffinityConfig": {
-          "properties": {},
           "type": "object"
         },
         "type": {
+          "type": "string",
           "enum": [
             "ClusterIP",
             "LoadBalancer",
             "NodePort",
             null
-          ],
-          "type": "string"
+          ]
         }
-      },
-      "type": "object"
+      }
     },
     "serviceAccount": {
+      "type": "object",
       "properties": {
         "annotations": {
-          "properties": {},
           "type": "object"
         },
         "create": {
@@ -687,10 +666,10 @@
         "name": {
           "type": "string"
         }
-      },
-      "type": "object"
+      }
     },
     "startupProbe": {
+      "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -710,16 +689,19 @@
         "timeoutSeconds": {
           "type": "integer"
         }
-      },
-      "type": "object"
+      }
     },
     "tests": {
+      "type": "object",
       "properties": {
         "unitTests": {
+          "type": "object",
           "properties": {
             "resources": {
+              "type": "object",
               "properties": {
                 "limits": {
+                  "type": "object",
                   "properties": {
                     "cpu": {
                       "type": "string"
@@ -727,10 +709,10 @@
                     "memory": {
                       "type": "string"
                     }
-                  },
-                  "type": "object"
+                  }
                 },
                 "requests": {
+                  "type": "object",
                   "properties": {
                     "cpu": {
                       "type": "string"
@@ -738,22 +720,17 @@
                     "memory": {
                       "type": "string"
                     }
-                  },
-                  "type": "object"
+                  }
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     },
     "tolerations": {
       "type": "array"
     }
   },
-  "title": "Monica Helm Charts Values Schema",
-  "type": "object"
+  "additionalProperties": true
 }

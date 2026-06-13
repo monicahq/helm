@@ -41,10 +41,10 @@ Kubernetes: `>=1.16.0-0`
 | Repository | Name | Version |
 |------------|------|---------|
 | https://meilisearch.github.io/meilisearch-kubernetes | meilisearch | 0.32.* |
-| oci://registry-1.docker.io/bitnamicharts | mariadb | 23.0.* |
-| oci://registry-1.docker.io/bitnamicharts | memcached | 8.0.* |
-| oci://registry-1.docker.io/bitnamicharts | postgresql | 17.1.* |
-| oci://registry-1.docker.io/bitnamicharts | redis | 23.1.* |
+| oci://registry-1.docker.io/bitnamicharts | mariadb | 26.1.* |
+| oci://registry-1.docker.io/bitnamicharts | memcached | 8.6.* |
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 18.7.* |
+| oci://registry-1.docker.io/bitnamicharts | redis | 27.0.* |
 
 ## Values
 
