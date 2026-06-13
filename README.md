@@ -38,6 +38,6 @@ Author: [Alexis Saettler](https://github.com/asbiin)
 
 This project is part of [MonicaHQ](https://github.com/monicahq/).
 
-Copyright © 2019–2024.
+Copyright © 2019–2026.
 
 Licensed under the AGPL-3.0 License. [View license](LICENSE.md).
