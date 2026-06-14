@@ -1,0 +1,10 @@
+monica:
+  host: monica.local
+
+httpRoute:
+  enabled: true
+  hostnames:
+    - monica.local
+  parentRefs:
+    - name: traefik-gateway
+      namespace: default

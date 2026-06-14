@@ -27,13 +27,55 @@ deploymentLabels: {}
 # -- Number of pods to be deployed
 replicaCount: 1
 
+httpRoute:
+  # -- Enable an HTTPRoute resource
+  enabled: false
+  # -- Set the route apiVersion
+  apiVersion: gateway.networking.k8s.io/v1
+  # -- Set the route kind
+  kind: HTTPRoute
+
+  # -- Route annotations
+  annotations: {}
+  # -- Route labels
+  labels: {}
+  # -- Route hostnames
+  hostnames: []
+  # -- Reference to parent gateways
+  parentRefs: []
+    # - name: traefik-gateway
+    #   namespace: default
+  # -- List of rules and filters applied.
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: "/"
+    #   filters:
+    #     - type: RequestHeaderModifier
+    #       requestHeaderModifier:
+    #         set:
+    #           - name: My-Overwrite-Header
+    #             value: this-is-the-only-value
+    #         remove:
+    #           - User-Agent
+    #   timeouts:
+    #     request: 300s
+    # - matches:
+    #     - path:
+    #         type: PathPrefix
+    #         value: /echo
+    #       headers:
+    #         - name: version
+    #           value: v2
+
 ## Allowing use of ingress controllers
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
   # -- Enable ingress controller resource
   enabled: false
-  # -- Name of the ingress class to use
+  # -- Name of the ingress class to use (i.e. nginx, traefik, contour, etc.)
   className: ""
   # -- Ingress service annotations
   annotations: {}
@@ -525,6 +567,44 @@ serviceAccount:
   # -- The name of the service account to use.
   #  If not set and create is true, a name is generated using the fullname template
   name: ""
+
+# -- Allows users to inject additional Kubernetes manifests (YAML) to be rendered with the release.
+# Could either be a list or a map
+# If a map, each key is the name of the manifest.
+# If an array, each item is a manifest, which can be a string (YAML block) or a YAML object.
+# Each item should be a string containing valid YAML. Example:
+# extraManifests:
+#   - |
+#     apiVersion: traefik.containo.us/v1alpha1
+#     kind: Middleware
+#     metadata:
+#       name: my-middleware
+#     spec:
+#       ...
+#   - |
+#     apiVersion: traefik.containo.us/v1alpha1
+#     kind: IngressRoute
+#     metadata:
+#       name: my-ingressroute
+#     spec:
+#       ...
+# Or as a map:
+# extraManifests:
+#   my-middleware:
+#     apiVersion: traefik.containo.us/v1alpha1
+#     kind: Middleware
+#     metadata:
+#       name: my-middleware
+#     spec:
+#       ...
+#   my-ingressroute:
+#     apiVersion: traefik.containo.us/v1alpha1
+#     kind: IngressRoute
+#     metadata:
+#       name: my-ingressroute
+#     spec:
+#       ...
+extraManifests: []
 
 # @ignored
 tests:

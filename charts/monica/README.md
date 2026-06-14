@@ -1,6 +1,6 @@
 # monica
 
-![Version: 1.0.15](https://img.shields.io/badge/Version-1.0.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
+![Version: 1.0.16](https://img.shields.io/badge/Version-1.0.16-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 5.0.0](https://img.shields.io/badge/AppVersion-5.0.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes to install Monica
 
@@ -65,13 +65,22 @@ Kubernetes: `>=1.16.0-0`
 | externalDatabase.password | string | `"secret"` | Database password |
 | externalDatabase.type | string | `"mysql"` | Database type. Supported database engines: `mysql` or `postgresql` |
 | externalDatabase.user | string | `"monica"` | Database user |
+| extraManifests | list | `[]` | Allows users to inject additional Kubernetes manifests (YAML) to be rendered with the release. Could either be a list or a map If a map, each key is the name of the manifest. If an array, each item is a manifest, which can be a string (YAML block) or a YAML object. Each item should be a string containing valid YAML. Example: extraManifests:   - |     apiVersion: traefik.containo.us/v1alpha1     kind: Middleware     metadata:       name: my-middleware     spec:       ...   - |     apiVersion: traefik.containo.us/v1alpha1     kind: IngressRoute     metadata:       name: my-ingressroute     spec:       ... Or as a map: extraManifests:   my-middleware:     apiVersion: traefik.containo.us/v1alpha1     kind: Middleware     metadata:       name: my-middleware     spec:       ...   my-ingressroute:     apiVersion: traefik.containo.us/v1alpha1     kind: IngressRoute     metadata:       name: my-ingressroute     spec:       ... |
 | fullnameOverride | string | `""` | Override the fullname of the chart |
+| httpRoute.annotations | object | `{}` | Route annotations |
+| httpRoute.apiVersion | string | `"gateway.networking.k8s.io/v1"` | Set the route apiVersion |
+| httpRoute.enabled | bool | `false` | Enable an HTTPRoute resource |
+| httpRoute.hostnames | list | `[]` | Route hostnames |
+| httpRoute.kind | string | `"HTTPRoute"` | Set the route kind |
+| httpRoute.labels | object | `{}` | Route labels |
+| httpRoute.parentRefs | list | `[]` | Reference to parent gateways |
+| httpRoute.rules | list | `[{"matches":[{"path":{"type":"PathPrefix","value":"/"}}]}]` | List of rules and filters applied. |
 | image.pullPolicy | string | `"IfNotPresent"` | The monica image pull policy |
 | image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. |
 | image.repository | string | `"ghcr.io/monicahq/monica-next"` | The monica image repository to pull from |
 | image.tag | string | `"main"` | The monica image tag to pull |
 | ingress.annotations | object | `{}` | Ingress service annotations |
-| ingress.className | string | `""` | Name of the ingress class to use |
+| ingress.className | string | `""` | Name of the ingress class to use (i.e. nginx, traefik, contour, etc.) |
 | ingress.enabled | bool | `false` | Enable ingress controller resource |
 | ingress.labels | object | `{}` | An array of service labels |
 | ingress.path | string | `"/"` | The Path to use in Ingress' paths |

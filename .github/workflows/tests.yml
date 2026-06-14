@@ -64,6 +64,10 @@ jobs:
           - name: Meilisearch and queue enabled
             file: meilisearch.yaml
 
+          - name: Traefik enabled
+            file: traefik.yaml
+            traefik: true
+
           # - name: External database
           #   external_database: true
           #   file: external_database.yaml
@@ -99,6 +103,18 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         with:
           kubectl_version: ${{ matrix.kubectl }}
+        
+      - name: Install Traefik
+        if: matrix.test_cases.traefik == 'true'
+        run: |
+          helm repo add traefik https://traefik.github.io/charts
+          helm repo update
+          kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+          helm install traefik traefik/traefik --wait \
+            --set providers.kubernetesGateway.enabled=true \
+            --set gateway.listeners.web.namespacePolicy.from=All
+          ifconfig
+          echo "172.17.0.1 monica.local" | sudo tee -a /etc/hosts
 
       - name: Copy test case file
         if: matrix.test_cases.file != ''
