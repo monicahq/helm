@@ -1,8 +1,10 @@
 {{- if .Values.httpRoute.enabled }}
+{{- $fullName := include "monica.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
 apiVersion: {{ .Values.httpRoute.apiVersion }}
 kind: {{ .Values.httpRoute.kind }}
 metadata:
-  name: {{ template "monica.fullname" . }}
+  name: {{ $fullName }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "monica.labels" . | nindent 4 }}
@@ -25,8 +27,8 @@ spec:
   rules:
     {{- range .Values.httpRoute.rules }}
     - backendRefs:
-        - name: {{ template "monica.fullname" . }}
-          port: {{ .Values.service.port }}
+        - name: {{ $fullName }}
+          port: {{ $svcPort }}
           weight: 1
       {{- with .matches }}
       matches:

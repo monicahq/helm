@@ -66,7 +66,7 @@ jobs:
 
           - name: Traefik enabled
             file: traefik.yaml
-            traefik: true
+            traefik: 'true'
 
           # - name: External database
           #   external_database: true
@@ -114,7 +114,7 @@ jobs:
             --set providers.kubernetesGateway.enabled=true \
             --set gateway.listeners.web.namespacePolicy.from=All
           ifconfig
-          echo "172.17.0.1 monica.local" | sudo tee -a /etc/hosts
+          echo "172.17.0.1 monica.kube.home" | sudo tee -a /etc/hosts
 
       - name: Copy test case file
         if: matrix.test_cases.file != ''
