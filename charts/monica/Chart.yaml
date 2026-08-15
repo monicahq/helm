@@ -2,7 +2,7 @@ apiVersion: v2
 name: monica
 description: A Helm chart for Kubernetes to install Monica
 type: application
-version: 1.0.15
+version: 1.0.16
 appVersion: "5.0.0"
 icon: https://raw.githubusercontent.com/monicahq/monica/aa98c09/public/img/favicon.svg
 maintainers:
@@ -65,4 +65,4 @@ annotations:
       url: https://github.com/monicahq/monica
   artifacthub.io/changes: |
     - kind: changed
-      description: Renamed Meilisearch variable
+      description: Add httpRoute and extraManifests values

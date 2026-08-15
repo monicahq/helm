@@ -1,0 +1,7 @@
+httpRoute:
+  enabled: true
+  hostnames:
+    - monica.kube.home
+  parentRefs:
+    - name: traefik-gateway
+      namespace: default

@@ -1,0 +1,28 @@
+extraManifests:
+  - apiVersion: traefik.io/v1alpha1
+    kind: TraefikService
+    metadata:
+      name: monica
+      namespace: monica
+    spec:
+      weighted:
+        services:
+          - name: monica
+            namespace: monica
+            port: 8080
+            weight: 1
+  - apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: monica
+      namespace: default
+    spec:
+      entryPoints:
+        - web
+      routes:
+        - match: Host(`monica.kube.home`)
+          kind: Rule
+          services:
+            - name: monica
+              kind: TraefikService
+              namespace: monica
