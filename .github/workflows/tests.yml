@@ -137,7 +137,9 @@ jobs:
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --skip-clean-up --config ct.yaml --namespace monica --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }}"
+        run: |
+          kubectl create namespace monica
+          ct install --skip-clean-up --config ct.yaml --namespace monica --helm-extra-args '--timeout 600s' --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ matrix.test_cases.helm_args }}"
 
       - name: External call
         run: curl -v http://monica.kube.home
