@@ -107,8 +107,8 @@ Create environment variables used to configure the monica container as well as t
 - name: APP_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ template "monica.fullname" . }}
-      key: appkey
+      name: {{ .Values.monica.existingSecret.secretName | default (include "monica.fullname" .) }}
+      key: {{ .Values.monica.existingSecret.appKey | default "appkey" }}
 - name: APP_URL
   value: {{ (printf "https://%s" .Values.monica.host) | quote }}
 {{- if .Values.internalDatabase.enabled }}
